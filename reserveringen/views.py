@@ -5,9 +5,12 @@ from django.utils.timezone import make_aware
 from .models import Reservering
 
 
-@login_required
+
 def reservering(request, film_id):
-    if request.method == 'POST':
+    if request.user.is_authenticated != True:
+        return redirect(f'/films/{film_id}/?openLoginModal=1')
+
+    elif request.method == 'POST':
 
         event_id = request.POST['event']
         aantal_tickets = int(request.POST['aantal'])
@@ -35,7 +38,7 @@ def reservering(request, film_id):
         return redirect('film_detail', film_id=film_id)
 
 
-@login_required
+
 def update_reservering(request, reservering_id):
     reservering = Reservering.objects.get(id=reservering_id)
 
@@ -49,7 +52,7 @@ def update_reservering(request, reservering_id):
     return render(request, '/accounts/dashboard/', {'error': 'Ongeldig aantal tickets'})
 
 
-@login_required
+
 def delete_reservation(request, reservering_id):
     reservering = get_object_or_404(Reservering, id=reservering_id)
 

@@ -1,11 +1,8 @@
-const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('show_modal') && urlParams.get('show_modal') === 'true') {
-        openModal('loginModal');
-    }
-
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.classList.add('show'); // Modal krijgt de 'show' klasse
+    if (modal) {
+        modal.classList.add('show');
+    }
 }
 
 function closeModal() {
@@ -15,23 +12,29 @@ function closeModal() {
     });
 }
 
-function showLogin() {
-    closeModal();
+function openLoginModal() {
+    closeModal()
     openModal('loginModal');
 }
 
-function showRegister() {
-    closeModal();
+function openRegisterModal() {
+    closeModal()
     openModal('registerModal');
 }
 
 window.addEventListener('click', function(event) {
     const loginModal = document.getElementById("loginModal");
     const registerModal = document.getElementById("registerModal");
+
     if (event.target === loginModal || event.target === registerModal) {
         closeModal();
     }
 });
+
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('show_modal') && urlParams.get('show_modal') === 'true') {
+    openModal('loginModal');
+}
 
 function login(event) {
     event.preventDefault();
@@ -49,7 +52,7 @@ function login(event) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,  // CSRF-token in de header
+            'X-CSRFToken': csrfToken,
         },
         body: JSON.stringify(data),
     })
@@ -67,8 +70,6 @@ function login(event) {
         alert('Er is een fout opgetreden: ' + error);
     });
 }
-
-
 
 function create_user(event) {
     event.preventDefault();
@@ -104,7 +105,7 @@ function create_user(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            window.location.href = '{% url "dashboard" %}';
+            window.location.href = '/account/dashboard';
             alert('Welkom op je persoonlijke dashboard');
         } else {
             alert(data.error || 'Er ging iets mis. Probeer opnieuw.');
@@ -116,8 +117,7 @@ function create_user(event) {
     });
 }
 
-
-function checkUserLoggedIn(redirect = openModal('loggedInModal')) {
+function checkUserLoggedIn() {
     fetch('/accounts/check-logged-in/', {
         method: 'GET',
         headers: {
@@ -127,13 +127,12 @@ function checkUserLoggedIn(redirect = openModal('loggedInModal')) {
     .then(response => response.json())
     .then(data => {
         if (data.is_logged_in) {
-            if (redirect != window.hreftyp) {
-                window.location.href = redirect;
-            }
-            else {
-                redirect
-            }
+            console.log('de user is al ingelogd')
+            closeModal()
+            openModal('loggedInModal');
         } else {
+            closeModal()
+            console.log('user is gechecked en niet ingelogd, de modal login word geopend')
             openModal('loginModal');
         }
     })
@@ -142,13 +141,12 @@ function checkUserLoggedIn(redirect = openModal('loggedInModal')) {
     });
 }
 
-
 function logout() {
     fetch('/accounts/logout/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value // Zorg ervoor dat CSRF-token wordt meegegeven
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
         body: JSON.stringify({})
     })
@@ -163,21 +161,14 @@ function logout() {
         }
     })
     .catch(error => {
-        console.error('Er is een fout opgetreden:', error);
+        console.error('Error:', error);
         alert('Er is een probleem opgetreden bij het uitloggen. Probeer het opnieuw.');
     });
 }
 
+const queryParams = new URLSearchParams(window.location.search);
+let modalstatus = parseInt(queryParams.get('openLoginModal'));
 
-function add_datum() {
-    const container = document.getElementById('datums-container');
-    const datumRow = document.createElement('div');
-    datumRow.classList.add('datum-row');
-
-    datumRow.innerHTML = `
-        <input type="date" name="datum[]" required style="padding: 8px; width: 48%; margin-right: 4%; border-radius: 4px;">
-        <input type="time" name="tijd[]" required style="padding: 8px; width: 48%; border-radius: 4px;">
-    `;
-
-    container.appendChild(datumRow);
+if(modalstatus) {
+    openLoginModal()
 }

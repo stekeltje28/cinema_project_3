@@ -1,3 +1,4 @@
+
 .container {
     max-width: 1200px;
     margin: 20px auto;
@@ -9,6 +10,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 20px;
+    margin-bottom: 30px;
 }
 
 .movie-header img {
@@ -43,27 +45,21 @@
     margin-top: 30px;
     font-size: 1.2rem;
     line-height: 1.8;
-    color: #dcdcdc; /* Voorbeeldkleur voor de tekst */
+    color: #dcdcdc;
 }
 
 .actions {
-    margin-top: 20px;
+    margin-top: 30px;
     display: flex;
     gap: 20px;
 }
 
+/* Stijl voor de reserverings- en opslaan-secties */
 .reservation-section, .save-film-section {
     padding: 20px;
-    background-color: #222; /* Voorbeeldkleur voor de achtergrond */
+    background-color: #222;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-.reservation-section {
-    flex: 2;
-}
-
-.save-film-section {
     flex: 1;
 }
 
@@ -71,4 +67,199 @@
     font-size: 1.8rem;
     color: rgba(0, 121, 255, 0.8);
     margin-bottom: 15px;
+}
+
+label {
+    font-size: 1rem;
+    color: white;
+    margin-bottom: 10px;
+    display: block;
+}
+
+select, input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    border: 1px solid #444;
+    margin-bottom: 20px;
+}
+
+select:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: #0079ff;
+}
+
+/* Knoppenstijl */
+button {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+/* Stijl voor de 'Reserveer' knop */
+button[type="submit"] {
+    background-color: #0079ff;
+    color: white;
+}
+
+button[type="submit"]:hover {
+    background-color: #005bb5;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+button[type="submit"]:active {
+    background-color: #003f9b;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Stijl voor de 'Opslaan' knop */
+button.save {
+    background-color: #28a745;
+    color: white;
+}
+
+button.save:hover {
+    background-color: #218838;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+button.save:active {
+    background-color: #1e7e34;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Stijl voor de 'Verwijderen' knop */
+button.remove {
+    background-color: #dc3545;
+    color: white;
+}
+
+button.remove:hover {
+    background-color: #c82333;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+button.remove:active {
+    background-color: #bd2130;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Terugknopstijl */
+.back-btn {
+    padding: 12px 24px;
+    background-color: #333;
+    color: white;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.back-btn:hover {
+    background-color: #555;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.back-btn:active {
+    background-color: #222;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsieve aanpassingen */
+@media (max-width: 768px) {
+    .movie-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .movie-header img {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .reservation-section, .save-film-section {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+.reservation-section {
+    padding: 20px;
+    background-color: #222;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    color: white;
+    margin-bottom: 20px;
+}
+
+.reservation-section h2 {
+    font-size: 1.8rem;
+    color: rgba(0, 121, 255, 0.8);
+    margin-bottom: 15px;
+}
+
+.reservation-section label {
+    font-size: 1rem;
+    color: white;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.reservation-section select,
+.reservation-section input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    border: 1px solid #444;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+}
+
+.reservation-section select:focus,
+.reservation-section input[type="number"]:focus {
+    outline: none;
+    border-color: #0079ff;
+}
+
+.reservation-section button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 8px;
+    background-color: #0079ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reservation-section button[type="submit"]:hover {
+    background-color: #005bb5;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.reservation-section button[type="submit"]:active {
+    background-color: #003f9b;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }

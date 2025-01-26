@@ -76,7 +76,7 @@ def check_logged_in(request):
 
 def dashboard(request):
     if not request.user.is_authenticated:
-        return redirect('login')
+        return redirect('/?openLoginModal=1')
 
     user_data, created = UserData.objects.get_or_create(user=request.user)
 
@@ -135,8 +135,9 @@ def save_film(request, film_id):
 
         return JsonResponse({'error': str(e)}, status=400)
 
-@login_required
 def toggle_film_save(request, film_id):
+    if request.user.is_authenticated != True:
+        return redirect(f'/films/{film_id}/?openLoginModal=1')
     try:
         film = get_object_or_404(Film, id=film_id)
         user_data, created = UserData.objects.get_or_create(user=request.user)

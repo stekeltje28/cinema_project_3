@@ -9,10 +9,208 @@
     <meta name="author" content="Thijs Stekelenburg">
     <title>Bioscoop - Films</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-    <link rel="stylesheet" href="{% static 'css/componenten/buttons.css' %}">
-    <link rel="stylesheet" href="{% static 'css/page_componenten/film_list.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
+
+<style>
+
+
+h1, h2, h3 {
+    margin: 0;
+}
+
+/* Container */
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Filters Sectie */
+.filters {
+    flex: 1 1 300px;
+    max-width: 300px;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filters h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: rgba(0, 121, 255, 0.9);
+}
+
+.filters form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.filters label {
+    font-size: 1rem;
+    color: #ccc;
+}
+
+.filters input,
+.filters select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #555;
+    border-radius: 10px;
+    background-color: #444;
+    color: #eee;
+    transition: border-color 0.3s ease;
+}
+
+.filters input:focus,
+.filters select:focus {
+    border-color: rgba(0, 121, 255, 0.8);
+    outline: none;
+}
+
+.filters .checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.filters .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #eee;
+}
+
+.filters button {
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #eee;
+    transition: background-color 0.3s ease;
+}
+
+.filters button.apply {
+    background-color: rgba(0, 121, 255, 0.8);
+}
+
+.filters button.apply:hover {
+    background-color: rgba(0, 121, 255, 1);
+}
+
+.filters button.reset {
+    background-color: #555;
+}
+
+.filters button.reset:hover {
+    background-color: #666;
+}
+
+.movie-grid {
+    flex: 3 1 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+
+.movie-card {
+    background-color: #333;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 95%;
+}
+
+.movie-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+}
+
+.movie-card img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+.movie-card .details {
+    flex: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.movie-card .details h3 {
+    font-size: 1.3rem;
+    color: rgba(0, 121, 255, 0.9);
+}
+
+.movie-card .details p {
+    font-size: 0.95rem;
+    margin: 0;
+    color: #ccc;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.movie-card .details a {
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: rgba(0, 121, 255, 0.8);
+    font-weight: bold;
+}
+
+.movie-card .details a:hover {
+    color: rgba(0, 121, 255, 1);
+    text-decoration: underline;
+}
+
+
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .filters {
+        max-width: 100%;
+    }
+
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .filters .checkbox-group {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .movie-card .details p {
+        -webkit-line-clamp: 2;
+    }
+
+    .movie-card {
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+}
+
+</style>
 
 <body>
 
@@ -38,17 +236,30 @@
             <label for="genre">Genre</label>
             <select name="genre" id="genre">
                 <option value="">Kies een genre</option>
-                {% for genre in genres %}
-                    <option value="{{ genre }}" {% if genre == request.GET.genre %}selected{% endif %}>{{ genre }}</option>
-                {% endfor %}
+                <option value="actie">Actie</option>
+                <option value="avontuur">Avontuur</option>
+                <option value="animatie">Animatie</option>
+                <option value="biografie">Biografie</option>
+                <option value="komedie">Komedie</option>
+                <option value="drama">Drama</option>
+                <option value="horror">Horror</option>
+                <option value="mysterie">Mysterie</option>
+                <option value="romantiek">Romantiek</option>
+                <option value="sciencefiction">Sciencefiction</option>
+                <option value="fantasie">Fantasie</option>
+                <option value="thriller">Thriller</option>
+                <option value="documentaire">Documentaire</option>
+                <option value="misdaad">Misdaad</option>
+                <option value="familie">Familie</option>
+                <option value="historisch">Historisch</option>
+                <option value="musical">Musical</option>
+                <option value="westerns">Western</option>
+                <option value="kortfilm">Kortfilm</option>
+                <option value="animatie">Animatie</option>
             </select>
 
             <label for="min_leeftijd">Minimale Leeftijd</label>
-            <select name="min_leeftijd" id="min_leeftijd">
-                {% for age in min_ages %}
-                    <option value="{{ age }}" {% if age == request.GET.min_leeftijd %}selected{% endif %}>{{ age }}+</option>
-                {% endfor %}
-            </select>
+            <input type="number" name="min_leeftijd" id="min_leeftijd" placeholder="leeftijd...">
 
             <label for="film_naam">Zoek op Film Naam</label>
             <input type="text" name="film_naam" id="film_naam" value="{{ request.GET.film_naam }}" placeholder="Film naam...">

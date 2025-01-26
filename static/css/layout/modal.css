@@ -42,6 +42,7 @@
     box-sizing: border-box;
     font-size: 1rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: white;
 }
 
 .modal-content label {

@@ -3,6 +3,9 @@ button {
     color: #111;
     cursor: pointer;
     transition: background-color 0.3s;
+    padding: 30px;
+    margin: 20px;
+    border-radius: 10px ;
 }
 
 button:hover {
