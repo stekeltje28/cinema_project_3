@@ -33,32 +33,25 @@
 
     <h1 style="text-align: center; color: white">kijk gerust naar ons aanbod in films!</h1>
 
-    <main style="margin-top: 50px">
+<main style="margin-top: 50px">
+    {% if film_groups %}
+        {% for group in film_groups %}
         <div class="marquee">
             <ul class="marquee-content">
-                <li><a href="#"><img src="{% static 'img/napoleon.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
-                <li><a href="#"><img src="{% static 'img/tempete.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
-                <li><a href="#"><img src="{% static 'img/tomb.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
+                {% for film in group %}
+                <li>
+                    <a href="films/{{ film.id }}">
+                        <img src="{{ film.afbeelding.url }}" alt="{{ film.titel }}"/>
+                    </a>
+                </li>
+                {% endfor %}
             </ul>
         </div>
-
-        <div class="marquee">
-            <ul class="marquee-content">
-                <li><a href="#"><img src="{% static 'img/napoleon.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
-                <li><a href="#"><img src="{% static 'img/tempete.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
-                <li><a href="#"><img src="{% static 'img/tomb.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
-            </ul>
-        </div>
-
-        <div class="marquee">
-            <ul class="marquee-content">
-                <li><a href="#"><img src="{% static 'img/napoleon.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
-                <li><a href="#"><img src="{% static 'img/tempete.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
-                <li><a href="#"><img src="{% static 'img/tomb.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
-            </ul>
-        </div>
-    </main>
-
+        {% endfor %}
+    {% else %}
+        <p>Geen films beschikbaar.</p>
+    {% endif %}
+</main>
     {% include 'componenten/footer.html' %}
     <script defer src="{% static 'js/marquee.js' %}"></script>
 </body>
