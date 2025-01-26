@@ -1,17 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  transition-duration: 0.8s;
-}
-
-body {
-  background-color: #111;
-  font-family: Arial, sans-serif;
-}
-
 .header {
   background: linear-gradient(120deg, rgb(101, 101, 101), rgb(0, 92, 206));
   color: #111;

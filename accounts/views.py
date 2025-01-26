@@ -68,8 +68,8 @@ def user_login(request):
 
         except json.JSONDecodeError:
             return JsonResponse({'message': 'Ongeldig JSON-formaat.', 'is_logged_in': False})
-
-    return JsonResponse({'message': 'Alleen POST-verzoeken worden ondersteund.', 'is_logged_in': False})
+    else:
+        return JsonResponse({'message': 'POST vereist'}, status=405)
 
 
 def user_logout(request):
@@ -81,10 +81,9 @@ def check_logged_in(request):
     return JsonResponse({'is_logged_in': request.user.is_authenticated})
 
 
-@login_required
 def dashboard(request):
     if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Je moet ingelogd zijn om toegang te krijgen tot het dashboard.'}, status=401)
+        return redirect('login')
 
     user_data, created = UserData.objects.get_or_create(user=request.user)
 

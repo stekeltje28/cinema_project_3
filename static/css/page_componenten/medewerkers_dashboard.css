@@ -114,7 +114,7 @@
 .card ul li {
     margin-bottom: 15px;
     font-size: 1.2rem;
-    color: #111
+    color: #111;
 }
 
 .card ul li ul {
@@ -124,7 +124,7 @@
 
 .card ul li ul li {
     font-size: 1rem;
-    color: #111
+    color: white;
 }
 
 

@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="mbo cinema! kom hier je films kijken in onze cinema, neem gerust een kijkje!">
-    <meta name="keywords" content="mbo cinema, films, bioscoop, cinema, reserveren">
+    <meta name="description" content="Voeg hier een beschrijving van je pagina toe.">
+    <meta name="keywords" content="sleutelwoord1, sleutelwoord2, sleutelwoord3">
     <meta name="author" content="Thijs Stekelenburg">
     <title>home</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
@@ -15,51 +15,51 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'css/componenten/cards.css' %}">
 
+
     <style>
     :root {
         --marquee-width: 100%;
         --marquee-height: 200px;
         --marquee-elements: 3;
-        --marquee-elements-displayed: 6;
+        --marquee-elements-displayed: 8;
         --marquee-elements-width: calc(var(--marquee-width) / var(--marquee-elements-displayed));
-    }
-    main {
-        font-family: 'Montserrat', sans-serif;
-        background-color: #111;
-        color: black;
-        height: auto;
-        margin-top: 20px;
-        display: block;
-        justify-content: center;
-        align-items: center;
     }
     </style>
 </head>
 
-<body style="background-color: #111">
+<body>
     {% include 'componenten/navbar.html' %}
     {% include 'componenten/header.html' %}
 
-    <h1 style="text-align: center;">kijk gerust naar ons aanbod in films!</h1>
+    <h1 style="text-align: center; color: white">kijk gerust naar ons aanbod in films!</h1>
 
-<main>
-    {% for group in film_groups %}
-        <section class="marquee">
+    <main style="margin-top: 50px">
+        <div class="marquee">
             <ul class="marquee-content">
-                {% for film in group %}
-                    <li>
-                        <a href="{% url 'film_detail' film.id %}">
-                            <img src="{{ film.afbeelding.url }}" alt="{{ film.title }}" class="film-image" />
-                        </a>
-                    </li>
-                {% endfor %}
+                <li><a href="#"><img src="{% static 'img/napoleon.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
+                <li><a href="#"><img src="{% static 'img/tempete.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
+                <li><a href="#"><img src="{% static 'img/tomb.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
             </ul>
-        </section>
-    {% endfor %}
-</main>
-    
+        </div>
+
+        <div class="marquee">
+            <ul class="marquee-content">
+                <li><a href="#"><img src="{% static 'img/napoleon.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
+                <li><a href="#"><img src="{% static 'img/tempete.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
+                <li><a href="#"><img src="{% static 'img/tomb.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
+            </ul>
+        </div>
+
+        <div class="marquee">
+            <ul class="marquee-content">
+                <li><a href="#"><img src="{% static 'img/napoleon.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
+                <li><a href="#"><img src="{% static 'img/tempete.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
+                <li><a href="#"><img src="{% static 'img/tomb.jpg' %}" alt="niks" style="width: 150px; height: 280px"/></a></li>
+            </ul>
+        </div>
+    </main>
+
     {% include 'componenten/footer.html' %}
-    
-<script defer src="{% static 'js/marquee.js' %}"></script>
+    <script defer src="{% static 'js/marquee.js' %}"></script>
 </body>
 </html>

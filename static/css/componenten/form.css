@@ -14,9 +14,10 @@ select, input[type="number"], button {
     font-size: 1rem;
 }
 
-select, input[type="number"] {
+select, input[type="number"],
+select, input[type="text"] {
     background-color: white;
-    color: #111;
+    color: #333;
 }
 
 form {
@@ -42,7 +43,7 @@ form input {
     max-width: 350px;
     border-radius: 10px;
     border: 1px solid #ccc;
-    background-color: #111;
+    background-color: white;
     color: #333;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 15px;

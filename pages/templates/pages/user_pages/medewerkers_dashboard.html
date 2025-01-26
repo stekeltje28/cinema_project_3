@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'css/componenten/form.css' %}">
     <link rel="stylesheet" href="{% static 'css/componenten/buttons.css' %}">
     <link rel="stylesheet" href="{% static 'css/page_componenten/medewerkers_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body>
 {% include 'componenten/navbar.html' %}
@@ -26,7 +27,6 @@
         <h3>Profiel</h3>
         <article class="profile-image">
             <img src="{% static 'img/' %}{{ user_data.profiel_foto }}" alt="Profiel Foto">
-            <button class="edit-button" onclick="document.getElementById('logout-form').submit();">
                 <span class="material-icons">edit</span>
             </button>
         </article>
@@ -181,31 +181,136 @@
         <p style="color: #bbb; font-size: 16px; margin-top: 20px;">Nieuw Event Toevoegen:</p>
         <form method="POST" action="{% url 'assign_film_date_location' %}" style="display: inline; margin-top: 10px;">
             {% csrf_token %}
-            <select id="film" name="film" required style="padding: 8px; margin-bottom: 10px; width: 100%; max-width: 300px; border-radius: 4px; background-color: #444; color: #fff;">
+            <select id="film" name="film" required style="padding: 8px; margin-bottom: 10px; width: 80%; max-width: 300px;">
                 <option value="" disabled selected>Kies Film</option>
                 {% for film in films %}
                     <option value="{{ film.id }}">{{ film.title }}</option>
                 {% endfor %}
             </select>
-            <select id="location" name="location" required style="padding: 8px; margin-bottom: 10px; width: 100%; max-width: 300px; border-radius: 4px; background-color: #444; color: #fff;">
+            <select id="location" name="location" required style="padding: 8px; margin-bottom: 10px; width: 80%; max-width: 300px;">
                 <option value="" disabled selected>Kies Locatie</option>
                 {% for location in locations %}
                     <option value="{{ location.id }}">{{ location.name }}</option>
                 {% endfor %}
             </select>
-            <select id="room" name="room" required style="padding: 8px; margin-bottom: 10px; width: 100%; max-width: 300px; border-radius: 4px; background-color: #444; color: #fff;">
-                <option value="" disabled selected>Kies Zaal</option>
+            <select id="room" name="room" required style="padding: 8px; margin-bottom: 10px; width: 80%; max-width: 300px;">
+                <option value="" disabled selected>Selecteer een zaal</option>
                 {% for room in rooms %}
-                    <option value="{{ room.id }}">{{ room.name }}</option>
+                    <option value="{{ room.id }}" data-capacity="{{ room.capacity }}">{{ room.name }}</option>
                 {% endfor %}
             </select>
-            <label for="date">Datum</label>
-            <input type="datetime-local" name="date" id="date" required style="padding: 8px; margin-bottom: 10px; width: 100%; max-width: 300px; border-radius: 4px; background-color: #444; color: #fff;">
-        <button onchange="add_datum()">datum toevoegen</button>
-            <button type="submit" class="btn btn-success" style="padding: 8px 15px; background-color: #5cb85c;">Nieuw Event Toevoegen</button>
+        <section>
+            <label for="beschikbare_plaatsen">Aantal beschikbare plaatsen:</label>
+            <input type="number" name="beschikbare_plaatsen" id="beschikbare_plaatsen" required style="padding: 8px; margin-bottom: 10px; width: 80%; max-width: 300px;">
+
+        </section>
+
+            <section>
+                <label for="date">Datum</label>
+                <input type="date" name="datum[]" required style="padding: 8px; width: 48%; margin-right: 4%; border-radius: 4px;">
+                <input type="time" name="tijd[]" required style="padding: 8px; width: 48%; border-radius: 4px;">
+                <div id="datums-container" style="margin-top: 20px;"></div>
+                <button type="button" onclick="addDatum()" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px;">Datum Toevoegen</button>
+                <button type="submit" class="btn btn-success" style="padding: 8px 15px; background-color: #5cb85c;">Nieuw Event Toevoegen</button>
+            </section>
         </form>
     </section>
+    <script defer src=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer>
+// Initialiseer de performance chart
+const ctx = document.getElementById('performanceChart').getContext('2d');
+const performanceChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Januari', 'Februari', 'Maart', 'April', 'Mei'],
+        datasets: [{
+            label: 'Prestaties per Maand',
+            data: [65, 59, 80, 81, 56],
+            backgroundColor: 'rgba(0, 121, 255, 0.8)',
+            borderColor: 'rgba(0, 121, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
 
+function updateZaal() {
+    const zaalDropdown = document.getElementById("zaal");
+    const capacityInput = document.getElementById("aantal_plaatsen");
+    const locationDropdown = document.getElementById("location");
+    const selectedLocationId = locationDropdown.value;
+
+    // Log de gekozen locatie ID
+    console.log("Geselecteerde locatie ID:", selectedLocationId);
+
+    // Leeg de zaal dropdown
+    zaalDropdown.innerHTML = '<option value="" disabled selected>Selecteer een zaal</option>';
+
+    // Controleer of er zalen zijn voor de geselecteerde locatie
+    if (zalenData[selectedLocationId]) {
+        zaalDropdown.disabled = false;
+
+        // Voeg de zalen van de geselecteerde locatie toe aan de dropdown
+        zalenData[selectedLocationId].forEach(zaal => {
+            const option = document.createElement("option");
+            option.value = zaal.id;
+            option.textContent = zaal.name;
+            option.setAttribute("data-capacity", zaal.capacity);
+            zaalDropdown.appendChild(option);
+        });
+    } else {
+        zaalDropdown.disabled = true; // Deactiveer de zaal dropdown als er geen zalen zijn
+    }
+
+    // Leeg het capaciteit invoerveld
+    capacityInput.value = "";
+
+    // Als er al een zaal is geselecteerd, vul dan de capaciteit in
+    zaalDropdown.addEventListener("change", () => {
+        const selectedOption = zaalDropdown.options[zaalDropdown.selectedIndex];
+        const capacity = selectedOption.getAttribute("data-capacity");
+        capacityInput.value = capacity ? capacity : "";
+    });
+}
+
+    function addDatum() {
+        const container = document.getElementById('datums-container');
+        const newDatumRow = document.createElement('div');
+        newDatumRow.classList.add('datum-row');
+        newDatumRow.style.marginBottom = '10px'; // Styling voor afstand tussen rijen
+        newDatumRow.innerHTML = `
+            <input type="date" name="datum[]" required style="padding: 8px; width: 48%; margin-right: 4%; border-radius: 4px;">
+            <input type="time" name="tijd[]" required style="padding: 8px; width: 48%; border-radius: 4px;">
+        `;
+        container.appendChild(newDatumRow);
+    }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const zaalDropdown = document.getElementById('room'); // Selecteer de zaal-dropdown
+    const capaciteitInput = document.getElementById('beschikbare_plaatsen'); // Selecteer het aantal plaatsen inputveld
+
+    // Luister naar wijzigingen in de zaal-dropdown
+    zaalDropdown.addEventListener('change', () => {
+        const selectedOption = zaalDropdown.options[zaalDropdown.selectedIndex]; // Haal de geselecteerde optie op
+        const capaciteit = selectedOption.getAttribute('data-capacity'); // Haal de capaciteit op uit het data-attribuut
+
+        // Vul het capaciteit inputveld in met de waarde of leeg het als het niet bestaat
+        capaciteitInput.value = capaciteit ? capaciteit : '';
+    });
+});
+
+
+
+</script>
 </main>
 </body>
 </html>

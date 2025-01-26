@@ -117,8 +117,8 @@ function create_user(event) {
 }
 
 
-function checkUserLoggedIn() {
-     fetch('/accounts/check-logged-in/', {
+function checkUserLoggedIn(redirect = openModal('loggedInModal')) {
+    fetch('/accounts/check-logged-in/', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -127,17 +127,21 @@ function checkUserLoggedIn() {
     .then(response => response.json())
     .then(data => {
         if (data.is_logged_in) {
-            openModal('loggedInModal');  // Toon de ingelogd modal
+            if (redirect != window.hreftyp) {
+                window.location.href = redirect;
+            }
+            else {
+                redirect
+            }
         } else {
-            openModal('loginModal');  // Toon de login modal als de gebruiker niet ingelogd is
+            openModal('loginModal');
         }
-        return data.is_logged_in;
     })
     .catch((error) => {
         console.error('Error:', error);
-        return false;  // Fout bij het ophalen van de inlogstatus
     });
 }
+
 
 function logout() {
     fetch('/accounts/logout/', {
@@ -153,7 +157,7 @@ function logout() {
         if (data.success) {
             localStorage.removeItem('userSession');
             sessionStorage.removeItem('userSession');
-            window.location.href = '/';  // Redirect naar de homepage na succesvol uitloggen
+            window.location.href = '/';
         } else {
             alert('Er is iets misgegaan tijdens het uitloggen!');
         }
