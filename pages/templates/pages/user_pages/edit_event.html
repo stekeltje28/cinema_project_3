@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bewerk een event en wijzig de details">
+    <meta name="keywords" content="event, film, locatie, zaal, wijziging">
+    <meta name="author" content="Thijs Stekelenburg">
+    <title>Bewerk Event - {{ event.film.title }}</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/componenten/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/componenten/buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/page_componenten/medewerkers_dashboard.css' %}">
+</head>
+<body>
+{% include 'componenten/navbar.html' %}
+
+<header class="header">
+    <h1>Bewerk Event</h1>
+</header>
+
+<div class="dashboard">
+    <div class="card">
+        <h3>Event Details Bewerken</h3>
+        {% if event.id %}
+    <form method="POST" action="{% url 'update_event' event.id %}">
+        {% csrf_token %}
+
+        <label for="film">Film</label>
+        <select name="film" id="film" required>
+            <option value="" disabled selected>Kies een film</option>
+            {% for film in films %}
+                <option value="{{ film.id }}" {% if film.id == event.film.id %}selected{% endif %}>{{ film.title }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <!-- Rest van het formulier -->
+        <button type="submit">Update Event</button>
+    </form>
+{% else %}
+    <p>Er is een probleem met het ophalen van de eventgegevens. Het event ID is niet beschikbaar.</p>
+{% endif %}
+
+    </div>
+</div>
+
+<form method="POST" id="logout-form" action="{% url 'logout' %}">
+    {% csrf_token %}
+</form>
+
+<script defer>
+    // Voeg JavaScript toe als nodig voor de functionaliteit van het formulier
+</script>
+
+</body>
+</html>

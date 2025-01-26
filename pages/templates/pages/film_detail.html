@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bekijk de details van de film.">
+    <meta name="keywords" content="film, details, bioscoop, genres">
+    <meta name="author" content="Thijs Stekelenburg">
+    <title>{{ film.title }} - Film Details</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="stylesheet" href={% static 'css/page_componenten/film_detail.css' %}>
+    <link rel="stylesheet" href={% static 'css/componenten/buttons.css' %}>
+    <link rel="stylesheet" href={% static 'css/componenten/form.css' %}>
+</head>
+
+<body>
+
+{% include 'componenten/navbar.html' %}
+
+<main class="container">
+    <header class="movie-header">
+        <img src="{{ film.afbeelding.url }}" alt="Film afbeelding">
+        <section class="movie-info">
+            <h1>{{ film.title }}</h1>
+            <p><span>Genre:</span> {{ film.genre }}</p>
+            <p><span>Leeftijdsgrens:</span> {{ film.min_leeftijd }}</p>
+            <p><span>Releasedatum:</span> {{ film.release_date }}</p>
+        </section>
+    </header>
+
+    <section class="description">
+        <p>{{ film.beschrijving }}</p>
+    </section>
+
+    <section class="actions">
+        <section class="reservation-section">
+            <h2>Reserveer Tickets</h2>
+            <form action="{% url 'reservering' film.id %}" method="POST">
+                {% csrf_token %}
+                <label for="event">Kies een locatie en tijd:</label>
+                <select name="event" id="event" required>
+                    {% for event in events %}
+                        <option value="{{ event.id }}">
+                            {{ event.location.name }} - {{ event.date|date:"d-m-Y H:i" }}
+                            (Beschikbare plekken: {{ event.totaal_aantal_plekken }})
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label for="aantal">Aantal tickets:</label>
+                <input type="number" id="aantal" name="aantal" min="1" max="{{ event.totaal_aantal_plekken }}" required>
+
+                <button type="submit">Reserveer</button>
+            </form>
+        </section>
+
+        <section class="save-film-section">
+            <h2>Opslaan in Mijn Films</h2>
+            <form action="{% url 'toggle_film_save' film.id %}" method="POST">
+                {% csrf_token %}
+                {% if film in user.userdata.opgeslagen.all %}
+                    <button type="submit" class="remove">
+                        Film Verwijderen uit Opgeslagen
+                    </button>
+                {% else %}
+                    <button type="submit" class="save">
+                        Film Opslaan
+                    </button>
+                {% endif %}
+            </form>
+        </section>
+    </section>
+
+    <a href="{% url 'film_list' %}" class="back-btn">Terug naar overzicht</a>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="nl">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="stylesheet" href="{% static 'css/layout/modal.css' %}">
+</head>
+
+<body>
+
+<section id="loggedInModal" class="modal" aria-hidden="true" aria-labelledby="loggedInModalTitle" tabindex="-1">
+    <article class="modal-content">
+        <button class="close" aria-label="Sluiten" onclick="closeModal()">&times;</button>
+        <h2 id="loggedInModalTitle">Hoi {{ user_data.naam }}, je bent al ingelogd!</h2>
+        <p>Wil je misschien naar je dashboard?</p>
+        <button style="margin-bottom: 20px" onclick="window.location.href = '/accounts/dashboard'">Dashboard</button>
+        <p>Je kunt ook altijd nog uitloggen!</p>
+        <button onclick="logout()">Uitloggen</button>
+    </article>
+</section>
+
+<section id="loginModal" class="modal" aria-hidden="true" aria-labelledby="loginModalTitle" tabindex="-1">
+    <article class="modal-content">
+        <button class="close" aria-label="Sluiten" onclick="closeModal()">&times;</button>
+        <h2 id="loginModalTitle">Inloggen</h2>
+        <form id="loginForm" onsubmit="login(event); return false;" method="POST">
+            {% csrf_token %}
+            <section class="form-row">
+                <article class="input-container">
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" required>
+                </article>
+                <article class="input-container">
+                    <label for="password">Wachtwoord:</label>
+                    <input type="password" id="password" name="password" required>
+                </article>
+            </section>
+
+            <button type="submit">Inloggen</button>
+        </form>
+        <p>Heb je nog geen account?
+            <a href="#" onclick="openRegisterModal(); return false;">Registreren</a>
+        </p>
+    </article>
+</section>
+
+<section id="registerModal" class="modal" aria-hidden="true" aria-labelledby="registerModalTitle" tabindex="-1">
+    <article class="modal-content">
+        <button class="close" aria-label="Sluiten" onclick="closeModal()">&times;</button>
+        <h2 id="registerModalTitle">Registreren</h2>
+        <form id="registerForm" onsubmit="create_user(event); return false;" method="POST">
+            {% csrf_token %}
+            <section class="form-row">
+                <article class="input-container">
+                    <label for="reg_first_name">Voornaam:</label>
+                    <input type="text" id="reg_first_name" name="first_name" placeholder="Voornaam" required>
+                </article>
+                <article class="input-container">
+                    <label for="reg_last_name">Achternaam:</label>
+                    <input type="text" id="reg_last_name" name="last_name" placeholder="Achternaam" required>
+                </article>
+            </section>
+
+            <section class="form-row">
+                <article class="input-container">
+                    <label for="reg_email">E-mail:</label>
+                    <input type="email" id="reg_email" name="email" required>
+                </article>
+                <article class="input-container">
+                    <label for="reg_leeftijd">Leeftijd:</label>
+                    <input type="number" id="reg_leeftijd" name="leeftijd" required>
+                </article>
+            </section>
+
+            <label for="reg_password">Wachtwoord:</label>
+            <input type="password" id="reg_password" name="password1" required>
+
+            <label for="reg_password2">Herhaal wachtwoord:</label>
+            <input type="password" id="reg_password2" name="password2" required>
+
+            <button type="submit">Registreren</button>
+        </form>
+        <p>Heb je al een account?
+            <a href="#" onclick="openLoginModal(); return false;">Inloggen</a>
+        </p>
+    </article>
+</section>
+
+<script src="{% static 'js/user_actions.js' %}" defer></script>
+
+</body>
+</html>

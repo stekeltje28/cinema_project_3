@@ -1,0 +1,110 @@
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1rem;
+    color: #333;
+}
+
+select, input[type="number"], button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+}
+
+select, input[type="number"] {
+    background-color: white;
+    color: #111;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
+form label {
+    font-size: 1.1rem;
+    color: #333;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+form input {
+    padding: 12px 20px;
+    font-size: 1rem;
+    width: 80%;
+    max-width: 350px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #111;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    transition: border-color 0.3s ease;
+}
+
+form input:focus {
+    border-color: rgba(0, 121, 255, 1);
+    outline: none;
+}
+
+form button {
+    padding: 12px 20px;
+    font-size: 16px;
+    color: #111;
+    background-color: rgba(0, 121, 255, 0.8);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+form button:hover {
+    background-color: rgba(0, 121, 255, 1);
+}
+
+form select {
+    padding: 12px 20px;
+    font-size: 1rem;
+    width: 80%;
+    max-width: 350px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: border-color 0.3s ease;
+}
+
+form select:focus {
+    border-color: rgba(0, 121, 255, 1);
+    outline: none;
+}
+
+form select::after {
+    content: '\25BC';
+    font-size: 20px;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+form {
+    position: relative;
+}

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="voeg hier je data toe!">
+    <meta name="keywords" content="medewerkers dashboard, data">
+    <meta name="author" content="Thijs Stekelenburg">
+    <title>Dashboard - {{ user_data.naam }}</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/componenten/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/componenten/buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/page_componenten/medewerkers_dashboard.css' %}">
+</head>
+<body>
+{% include 'componenten/navbar.html' %}
+
+<header class="header">
+    <h1>dashboard</h1>
+</header>
+
+<main class="dashboard">
+
+    <section class="card profiel">
+        <h3>Profiel</h3>
+        <article class="profile-image">
+            <img src="{% static 'img/' %}{{ user_data.profiel_foto }}" alt="Profiel Foto">
+            <button class="edit-button" onclick="document.getElementById('logout-form').submit();">
+                <span class="material-icons">edit</span>
+            </button>
+        </article>
+        <p><strong>Naam:</strong> {{ user_data.naam }}</p>
+        <p><strong>Leeftijd:</strong> {{ user_data.leeftijd }}</p>
+        <button onclick="document.getElementById('logout-form').submit();">log uit</button>
+    </section>
+
+    <section class="card charts">
+        <h3>Charts en Statistieken</h3>
+        <p>aantal reserveringen per maand</p>
+        <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+        </div>
+        <div class="button_container">
+            <button><span class="material-icons">refresh</span> Vernieuwen</button>
+            <button><span class="material-icons">download</span> Downloaden</button>
+        </div>
+    </section>
+
+    <section class="card">
+        <h3>Film Toevoegen</h3>
+        <form method="POST" action="{% url 'add_film' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="title">Film Titel</label>
+            <input type="text" name="title" id="title" required placeholder="Voer de titel van de film in">
+            <br>
+            <label for="afbeelding">Afbeelding</label>
+            <input type="file" name="afbeelding" id="afbeelding" accept="image/*" required>
+            <br>
+            <label for="beschrijving">Beschrijving</label>
+            <textarea id="beschrijving" name="beschrijving" rows="4" placeholder="Geef een korte beschrijving van de film" required></textarea>
+            <br>
+            <label for="min_leeftijd">Minimum Leeftijd</label>
+            <input id="min_leeftijd" name="min_leeftijd" placeholder="Kijkwijzer leeftijd" required>
+            <br>
+            <select name="genre" id="genre" class="genre" required>
+                <option value="">Kies een genre</option>
+                <option value="action">Actie</option>
+                <option value="adventure">Avontuur</option>
+                <option value="comedy">Comedy</option>
+                <option value="drama">Drama</option>
+                <option value="horror">Horror</option>
+                <option value="sci-fi">Science Fiction</option>
+                <option value="thriller">Thriller</option>
+                <option value="romance">Romantiek</option>
+                <option value="animation">Animatie</option>
+            </select>
+            <button type="submit">Film Toevoegen</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h3>Locaties en Zalen</h3>
+        <ul>
+            {% for location in locations %}
+                <li><strong>{{ location.name }}</strong>
+                    {% if location.address %}
+                        <p>{{ location.address }}, {{ location.city }}</p>
+                    {% endif %}
+                    <ul>
+                        {% for room in location.rooms.all %}
+                            <li>{{ room.name }} - Capaciteit: {{ room.capacity }} personen
+                                <form method="POST" action="{% url 'delete_room' room.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" onclick="return confirm('Weet je zeker dat je deze zaal wilt verwijderen?')">Verwijder zaal</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <form method="POST" action="{% url 'delete_location' location.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Weet je zeker dat je deze locatie wilt verwijderen?')">Verwijder locatie</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="card">
+        <h3>Voeg een zaal toe</h3>
+        <p>Voeg een zaal toe aan een locatie</p>
+        <form method="POST" action="{% url 'add_room' %}">
+            {% csrf_token %}
+            <label for="location">Kies een locatie:</label>
+            <select name="location" id="location" class="form-control" required>
+                <option value="" disabled selected>Selecteer een locatie</option>
+                {% for location in locations %}
+                    <option value="{{ location.id }}">{{ location.name }}</option>
+                {% endfor %}
+            </select>
+            <label for="name">Naam van de zaal:</label>
+            <input type="text" name="name" id="name" class="form-control" placeholder="Bijv. Zaal 1" required>
+            <label for="capacity">Capaciteit:</label>
+            <input type="number" name="capacity" id="capacity" class="form-control" placeholder="Aantal stoelen" required>
+            <button type="submit" class="btn btn-primary">Voeg zaal toe</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h3>locatie toevoegen</h3>
+        <p>Voeg een nieuwe locatie toe</p>
+        <form method="POST" action="{% url 'add_location' %}">
+            {% csrf_token %}
+            <label for="name">Naam van de locatie</label>
+            <input type="text" name="name" id="name" class="form-control" placeholder="Bijv. Amsterdam" required>
+            <br>
+            <label for="address">Adres</label>
+            <input type="text" name="address" id="address" class="form-control" placeholder="Straatnaam 123" required>
+            <label for="city">Stad of regio</label>
+            <br>
+            <input type="text" name="city" id="city" class="form-control" placeholder="Bijv. Noord-Holland">
+            <button type="submit" class="btn btn-primary">Voeg locatie toe</button>
+        </form>
+    </section>
+
+    <section class="card" style="width: 100%; padding: 20px; background-color: #333; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+        <h3 style="color: #fff; font-size: 24px; margin-bottom: 10px;">Films Beheren</h3>
+        <p style="color: #bbb; font-size: 16px;">Selecteer een film om een datum, locatie, zaal en reserveringen toe te voegen of aan te passen:</p>
+        <table style="width: 100%; border-collapse: collapse; text-align: left; color: #fff;">
+            <thead>
+                <tr>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Film Titel</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Locatie</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Zaal</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Datum - tijd</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">totaal beschikbare plaatsen</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Aantal Reserveringen</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Acties</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ event.film.title }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ event.location.name }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ event.room.name }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ event.date }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ event.totaal_aantal_plekken }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;"></td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">
+                        <a href="{% url 'edit_event' event.id %}" class="btn btn-warning" style="padding: 5px 10px; color: #fff; background-color: #f0ad4e; border-radius: 4px; text-decoration: none;">Bewerk</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 10px; border-bottom: 1px solid #aaa;">Geen events gevonden</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p style="color: #bbb; font-size: 16px; margin-top: 20px;">Nieuw Event Toevoegen:</p>
+        <form method="POST" action="{% url 'assign_film_date_location' %}" style="display: inline; margin-top: 10px;">
+            {% csrf_token %}
+            <select id="film" name="film" required style="padding: 8px; margin-bottom: 10px; width: 100%; max-width: 300px; border-radius: 4px; background-color: #444; color: #fff;">
+                <option value="" disabled selected>Kies Film</option>
+                {% for film in films %}
+                    <option value="{{ film.id }}">{{ film.title }}</option>
+                {% endfor %}
+            </select>
+            <select id="location" name="location" required style="padding: 8px; margin-bottom: 10px; width: 100%; max-width: 300px; border-radius: 4px; background-color: #444; color: #fff;">
+                <option value="" disabled selected>Kies Locatie</option>
+                {% for location in locations %}
+                    <option value="{{ location.id }}">{{ location.name }}</option>
+                {% endfor %}
+            </select>
+            <select id="room" name="room" required style="padding: 8px; margin-bottom: 10px; width: 100%; max-width: 300px; border-radius: 4px; background-color: #444; color: #fff;">
+                <option value="" disabled selected>Kies Zaal</option>
+                {% for room in rooms %}
+                    <option value="{{ room.id }}">{{ room.name }}</option>
+                {% endfor %}
+            </select>
+            <label for="date">Datum</label>
+            <input type="datetime-local" name="date" id="date" required style="padding: 8px; margin-bottom: 10px; width: 100%; max-width: 300px; border-radius: 4px; background-color: #444; color: #fff;">
+        <button onchange="add_datum()">datum toevoegen</button>
+            <button type="submit" class="btn btn-success" style="padding: 8px 15px; background-color: #5cb85c;">Nieuw Event Toevoegen</button>
+        </form>
+    </section>
+
+</main>
+
+</body>
+</html>

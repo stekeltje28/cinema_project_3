@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition-duration: 0.8s;
+}
+
+body {
+  background-color: #111;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  background: linear-gradient(120deg, rgb(101, 101, 101), rgb(0, 92, 206));
+  color: #111;
+  padding: 20px 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.header h1 {
+  font-family: "Roboto", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.topbar {
+  background: linear-gradient(120deg, rgb(0, 92, 206), rgb(101, 101, 101));
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.icon {
+  font-size: 30px;
+  font-family: "Old Standard TT", serif;
+  font-style: normal;
+  margin-right: 10px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+nav li {
+  height: 60px;
+  margin: 0 10px;
+}
+
+nav a {
+  height: 100%;
+  padding: 0 20px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: black;
+  transition-duration: 0.8s;
+}
+
+nav a:hover {
+  background-color: rgba(63, 63, 63, 0.4);
+  color: #111;
+  transition-duration: 0.8s;
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 250px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 10px 0 10px -10px black;
+  list-style: none;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  border-radius: 10px;
+}
+
+.sidebar li {
+  width: 100%;
+}
+
+.sidebar a {
+  width: 100%;
+  font-size: 20px;
+  color: #111;
+}
+
+.sidebar a:hover {
+  background-color: rgba(0, 92, 206, 0.5);
+  box-shadow: inset 10px 0 10px -10px black;
+}
+
+.menu-button {
+  display: none;
+}
+
+.hideOnMobile {
+  display: block;
+}
+
+@media (max-width: 400px) {
+  .sidebar {
+    width: 100%;
+    right: 0px;
+  }
+}
+
+@media (max-width: 800px) {
+  .menu-button {
+    display: block;
+  }
+  .hideOnMobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 801px) {
+  .menu-button {
+    display: none;
+  }
+  .sidebar {
+    display: none !important;
+  }
+  .topbar .bar {
+    display: flex;
+  }
+}
+
+.material-icons {
+    color: #111;
+    font-size: 48px;
+}

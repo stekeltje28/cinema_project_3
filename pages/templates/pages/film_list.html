@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="nl">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bekijk de nieuwste films in onze bioscoop.">
+    <meta name="keywords" content="bioscoop, films, genre, tickets">
+    <meta name="author" content="Thijs Stekelenburg">
+    <title>Bioscoop - Films</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="stylesheet" href="{% static 'css/componenten/buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/page_componenten/film_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body>
+
+{% include 'componenten/navbar.html' %}
+
+<header class="header">
+    <h1>Onze Films</h1>
+</header>
+
+<main class="container">
+    <aside class="filters">
+        <h2>Filters</h2>
+        <form method="GET" action="{% url 'film_list' %}">
+            <label for="locatie">Locatie</label>
+            <div class="checkbox-group">
+                {% for locatie in locations %}
+                    <label>
+                        <input type="checkbox" name="locatie[]" value="{{ locatie.name }}" {% if locatie.name in locatie_filter %}checked{% endif %}> {{ locatie.name }}
+                    </label>
+                {% endfor %}
+            </div>
+
+            <label for="genre">Genre</label>
+            <select name="genre" id="genre">
+                <option value="">Kies een genre</option>
+                {% for genre in genres %}
+                    <option value="{{ genre }}" {% if genre == request.GET.genre %}selected{% endif %}>{{ genre }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="min_leeftijd">Minimale Leeftijd</label>
+            <select name="min_leeftijd" id="min_leeftijd">
+                {% for age in min_ages %}
+                    <option value="{{ age }}" {% if age == request.GET.min_leeftijd %}selected{% endif %}>{{ age }}+</option>
+                {% endfor %}
+            </select>
+
+            <label for="film_naam">Zoek op Film Naam</label>
+            <input type="text" name="film_naam" id="film_naam" value="{{ request.GET.film_naam }}" placeholder="Film naam...">
+
+            <button type="submit" class="apply">Toepassen</button>
+            <button type="button" class="reset" onclick="window.location.href = '{% url 'film_list' %}'">Reset Filters</button>
+        </form>
+    </aside>
+
+    <section class="movie-grid">
+        {% for film in films %}
+            <article class="movie-card">
+                <img src="{{ film.afbeelding.url }}" alt="{{ film.title }}">
+                <section class="details">
+                    <h3>{{ film.title }}</h3>
+                    <p>{{ film.genre }}</p>
+                    <p>{{ film.beschrijving|truncatewords:20 }}</p>
+                    <a href="{% url 'film_detail' film.id %}">Lees meer / reserveer</a>
+                </section>
+            </article>
+        {% endfor %}
+    </section>
+</main>
+
+{% include 'componenten/footer.html' %}
+
+</body>
+</html>

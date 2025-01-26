@@ -1,0 +1,14 @@
+    .header-image {
+        width: 70%;
+        height: auto;
+        display: block;
+        margin: auto auto;
+        border-radius: 8px;
+    }
+    .main_header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        max-height: clac(50vh + 50vw);
+    }

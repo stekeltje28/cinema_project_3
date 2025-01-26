@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{% static 'css/layout/navbar.css' %}">
+</head>
+<body>
+{% include 'componenten/modal.html' %}
+  <nav class="topbar">
+    <ul class="bar">
+      <li class="icon"><a href="{% url 'index' %}">MBO-Cinemas</a></li>
+    </ul>
+    <ul class="sidebar">
+      <li><a href="{% url 'index' %}">home</a></li>
+      <li><a href="{% url 'films' %}">films</a></li>
+      <li><a href="{% url 'dashboard' %}">dashboard</a></li>
+      <li class="material-icons md-48">
+        <a href="#" onclick="checkUserLoggedIn()">person</a>
+      </li>
+    </ul>
+    <ul class="bar">
+      <li class="hideOnMobile"><a href="{% url 'index' %}">home</a></li>
+      <li class="hideOnMobile"><a href="{% url 'films' %}">films</a></li>
+      <li class="hideOnMobile"><a href="{% url 'dashboard' %}">dashboard</a></li>
+      <li class="material-icons md-48">
+          <a href="#" onclick="checkUserLoggedIn()">person</a>
+      </li>
+      <li class="menu-button" onclick="showSidebar()">
+          <a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="M120 816v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/></svg></a>
+      </li>
+    </ul>
+  </nav>
+
+  <script src="{% static 'js/navbar_sidebar.js' %}"></script>
+</body>
+</html>

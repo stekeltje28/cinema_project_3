@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Medewerkers Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #111;
+        }
+
+        .material-icons {
+            font-size: 24px;
+            color: #111;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            position: relative;
+            background: linear-gradient(120deg, rgba(0, 121, 255, 0.68), rgba(255, 255, 255, 0.3));
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 20px;
+            height: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: #111;
+            text-align: center;
+        }
+
+        .card p {
+            color: #111;
+            text-align: center;
+            margin: 2px 0;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0;
+        }
+
+        .card ul li {
+            margin: 5px 0;
+            line-height: 1.2;
+        }
+
+        form {
+            margin: 5px 0;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 10%;
+            overflow: hidden;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .edit-button {
+            position: absolute;
+            bottom: -11px;
+            right: -10px;
+            background-color: rgba(0, 121, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .edit-button .material-icons {
+            font-size: 20px;
+            color: #111;
+        }
+
+        .edit-button:hover {
+            background-color: rgba(0, 121, 255, 1);
+            transform: scale(1.1);
+        }
+
+        button {
+            margin: 15px 0;
+            padding: 12px 20px;
+            font-size: 16px;
+            color: #111;
+            background-color: rgba(0, 121, 255, 0.8);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button span {
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: rgba(0, 121, 255, 1);
+        }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+{% include 'componenten/navbar.html' %}
+
+<header class="header">
+    <h1>Hey {{ user.name }}, welkom!</h1>
+</header>
+
+<div class="dashboard">
+
+    <div class="card profiel">
+        <h3>Profiel</h3>
+        <div class="profile-image">
+            <img src="{% static 'img/' %}{{ user_data.profiel_foto }}" alt="Profiel Foto">
+            <button class="edit-button" onclick="document.getElementById('logout-form').submit();">
+                <span class="material-icons">edit</span>
+            </button>
+        </div>
+        <p><strong>Naam:</strong> {{ user.name }}</p>
+        <p><strong>Leeftijd:</strong> {{ user_data.leeftijd }}</p>
+        <button onclick="logout()">Uitloggen</button>
+    </div>
+
+
+    <div class="card">
+        <h3>Reserveringen</h3>
+        {% if reserveringen %}
+            <ul>
+                {% for reservering in reserveringen %}
+                    <li>
+                        <strong>{{ reservering.event.film.title }}</strong> - {{ reservering.aantal_tickets }} tickets
+
+
+                        <form method="POST" action="{% url 'update_reservering' reservering.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <label for="aantal_tickets">Aantal tickets:</label>
+                            <input type="number" name="aantal_tickets" min="1" value="{{ reservering.aantal_tickets }}">
+                            <button type="submit">Wijzig reservering</button>
+                        </form>
+
+
+                        <form method="POST" action="{% url 'delete_reservation' reservering.id %}" style="display: inline; margin-left: 10px;">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-button">Annuleer reservering</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <h4>Geen reserveringen</h4>
+        {% endif %}
+        <h4>Aantal recente reserveringen: {{ aantal_recente_reserveringen }}</h4>
+    </div>
+
+
+    <div class="card">
+        <h3>Smaakprofiel</h3>
+        <h4>Opgeslagen films:</h4>
+        {% if opgeslagen_films %}
+            <ul>
+                {% for film in opgeslagen_films %}
+                    <li>{{ film.title }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <h4>Geen opgeslagen films</h4>
+        {% endif %}
+    </div>
+
+</div>
+
+<form method="POST" id="logout-form" action="{% url 'logout' %}">
+    {% csrf_token %}
+</form>
+
+</body>
+</html>

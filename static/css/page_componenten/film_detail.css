@@ -1,0 +1,74 @@
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.movie-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+.movie-header img {
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.movie-info {
+    flex: 1;
+}
+
+.movie-info h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: rgba(0, 121, 255, 0.8);
+}
+
+.movie-info p {
+    margin: 10px 0;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.movie-info span {
+    font-weight: bold;
+    color: rgba(0, 121, 255, 0.8);
+}
+
+.description {
+    margin-top: 30px;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #dcdcdc; /* Voorbeeldkleur voor de tekst */
+}
+
+.actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}
+
+.reservation-section, .save-film-section {
+    padding: 20px;
+    background-color: #222; /* Voorbeeldkleur voor de achtergrond */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.reservation-section {
+    flex: 2;
+}
+
+.save-film-section {
+    flex: 1;
+}
+
+.reservation-section h2, .save-film-section h2 {
+    font-size: 1.8rem;
+    color: rgba(0, 121, 255, 0.8);
+    margin-bottom: 15px;
+}
