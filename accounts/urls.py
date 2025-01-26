@@ -12,6 +12,9 @@ urlpatterns = [
     path('check-logged-in/', views.check_logged_in, name='check_logged_in'),
     path('dashboard/', views.dashboard, name='dashboard'),
 
+    path('edit_reservation/<int:reservation_id>/', views.edit_reservation, name='edit_reservation'),
+    path('delete_reservation/<int:reservation_id>/', views.delete_reservation, name='delete_reservation'),
+
     path('remove_film/<int:film_id>/', accounts_views.remove_film_from_smaakprofiel,name='remove_film_from_smaakprofiel'),
 
     path('assign/', reservering_views.assign_film_date_location, name='assign_film_date_location'),

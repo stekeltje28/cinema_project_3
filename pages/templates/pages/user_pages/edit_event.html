@@ -4,44 +4,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Bewerk een event en wijzig de details">
-    <meta name="keywords" content="event, film, locatie, zaal, wijziging">
+    <meta name="description" content="Bewerk een reservering en wijzig de details">
+    <meta name="keywords" content="reservering, film, locatie, zaal, wijziging">
     <meta name="author" content="Thijs Stekelenburg">
-    <title>Bewerk Event - {{ event.film.title }}</title>
+    <title>Bewerk Reservering - {{ reservation.id }}</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/componenten/form.css' %}">
-    <link rel="stylesheet" href="{% static 'css/componenten/buttons.css' %}">
-    <link rel="stylesheet" href="{% static 'css/page_componenten/medewerkers_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    <style>
+        .dashboard {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 10000;
+            background: linear-gradient(120deg, rgba(0, 121, 255, 0.68), rgba(255, 255, 255, 0.3));
+            margin: 10px 10px;
+            transition-duration: 1s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card h3 {
+            color: #111;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .card p {
+            color: #111;
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        select, input {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #2058d9;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
 </head>
 <body>
 {% include 'componenten/navbar.html' %}
 
 <header class="header">
-    <h1>Bewerk Event</h1>
+    <h1>Bewerk Reservering</h1>
 </header>
 
 <div class="dashboard">
     <div class="card">
-        <h3>Event Details Bewerken</h3>
-        {% if event.id %}
-    <form method="POST" action="{% url 'update_event' event.id %}">
-        {% csrf_token %}
+        <h3>Reservering Details Bewerken</h3>
+        <form method="post">
+            {% csrf_token %}
 
-        <label for="film">Film</label>
-        <select name="film" id="film" required>
-            <option value="" disabled selected>Kies een film</option>
-            {% for film in films %}
-                <option value="{{ film.id }}" {% if film.id == event.film.id %}selected{% endif %}>{{ film.title }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <!-- Rest van het formulier -->
-        <button type="submit">Update Event</button>
-    </form>
-{% else %}
-    <p>Er is een probleem met het ophalen van de eventgegevens. Het event ID is niet beschikbaar.</p>
-{% endif %}
+            <label for="user">Klant:</label>
+            <select name="user" id="user" required>
+                {% for user in users %}
+                    <option value="{{ user.id }}" {% if user.id == reservation.user.id %}selected{% endif %}>{{ user.naam }}</option>
+                {% endfor %}
+            </select>
 
+            <label for="film">Film:</label>
+            <select name="film" id="film" required>
+                {% for film in films %}
+                    <option value="{{ film.id }}" {% if film.id == reservation.film.id %}selected{% endif %}>{{ film.title }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="location">Locatie:</label>
+            <select name="location" id="location" required>
+                {% for location in locations %}
+                    <option value="{{ location.id }}" {% if location.id == reservation.location.id %}selected{% endif %}>{{ location.name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="room">Zaal:</label>
+            <select name="room" id="room" required>
+                {% for room in rooms %}
+                    <option value="{{ room.id }}" {% if room.id == reservation.room.id %}selected{% endif %}>{{ room.name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="date">Datum:</label>
+            <input type="date" name="date" value="{{ reservation.date|date:'Y-m-d' }}" required>
+
+            <label for="tijd">Tijd:</label>
+            <input type="time" name="tijd" value="{{ reservation.time|time:'H:i' }}" required>
+
+            <label for="aantal_reserveringen">Aantal Reserveringen:</label>
+            <input type="number" name="aantal_reserveringen" value="{{ reservation.aantal_reserveringen }}" required>
+
+            <button type="submit">Bewerken</button>
+        </form>
     </div>
 </div>
 
@@ -49,9 +143,7 @@
     {% csrf_token %}
 </form>
 
-<script defer>
-    // Voeg JavaScript toe als nodig voor de functionaliteit van het formulier
-</script>
+{% include 'componenten/footer.html' %}
 
 </body>
 </html>

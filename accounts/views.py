@@ -1,15 +1,8 @@
-from django.contrib.auth import authenticate, login, logout
-from django.http import JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.contrib.auth import authenticate, logout
 import json
-from .models import CustomUser, UserData
 from films.models import Film, Location, Room
-from reserveringen.models import Event, Reservering
+from reserveringen.models import Event
 from django.contrib.auth.decorators import login_required
-from .models import UserData
-from django.shortcuts import get_object_or_404
-
 from django.http import JsonResponse
 from django.contrib.auth import login
 from .models import CustomUser, UserData
@@ -161,4 +154,15 @@ def toggle_film_save(request, film_id):
         return JsonResponse({'error': str(e)}, status=400)
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from reserveringen.models import Reservering
+
+def edit_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservering, id=reservation_id)
+    return render(request, 'pages/user_pages/edit_reservation.html', {'reservation': reservation})
+
+def delete_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservering, id=reservation_id)
+    reservation.delete()
+    return redirect('dashboard')
 

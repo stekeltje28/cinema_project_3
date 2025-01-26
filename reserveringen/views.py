@@ -1,32 +1,8 @@
-from django.shortcuts import render, redirect
-from .models import Reservering
-from .forms import ReserveringForm
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
-from django.contrib import messages
-from reserveringen.models import Event
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-from .models import Film, Location, Room, Event
-from django.http import HttpResponseBadRequest
-from datetime import datetime
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-from .models import Film, Location, Room, Event
-from datetime import datetime
 from django.utils.timezone import make_aware
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.utils.timezone import make_aware
-from datetime import datetime
-from django.core.exceptions import ValidationError
-from films.models import Film, Location, Room
-
-from django.shortcuts import render, redirect
 from .models import Reservering
-from django.contrib.auth.decorators import login_required
 
 
 @login_required
@@ -95,7 +71,6 @@ def delete_reservation(request, reservering_id):
 
 
 def assign_film_date_location(request):
-
     if request.method == "POST":
         film_id = request.POST.get('film')
         location_id = request.POST.get('location')
@@ -103,13 +78,6 @@ def assign_film_date_location(request):
         datum_list = request.POST.getlist('datum[]')
         tijd_list = request.POST.getlist('tijd[]')
         beschikbare_plaatsen_id = request.POST.get('beschikbare_plaatsen')
-
-        print("Film ID:", film_id)
-        print("Location ID:", location_id)
-        print("Room ID:", room_id)
-        print("Datum List:", datum_list)
-        print("Tijd List:", tijd_list)
-        print("Beschikbare Plaatsen ID:", beschikbare_plaatsen_id)
 
         if not film_id or not location_id or not room_id or not datum_list or not tijd_list:
             messages.error(request, "Alle velden zijn verplicht.")
@@ -165,22 +133,6 @@ def assign_film_date_location(request):
         'rooms': rooms
     })
 
-
-from django.shortcuts import render, get_object_or_404
-from .models import Event
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Event, Film, Location, Room
-from .forms import EventForm
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .forms import EventForm
-from .models import Event, Film, Location, Room
-from datetime import time
-
-from datetime import datetime
-
-
 def edit_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     films = Film.objects.all()
@@ -189,17 +141,33 @@ def edit_event(request, event_id):
 
     if request.method == 'POST':
         form = EventForm(request.POST, instance=event)
+
         if form.is_valid():
+            date_str = request.POST.get('date')
+            time_str = request.POST.get('tijd')
 
-            datum_str = request.POST.get('date')
-            tijd_str = request.POST.get('tijd')
+            if date_str and time_str:
+                try:
+                    # Combineer de datum en tijd naar een datetime object
+                    datetime_str = f"{date_str} {time_str}"
+                    event_datetime = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+                    event.date = event_datetime  # Bewaar de gecombineerde datetime
+                    form.save()  # Sla het event op
+                    return redirect('dashboard')  # Of een andere URL waar je naartoe wilt na het opslaan
+                except ValueError:
+                    form.add_error(None, 'Datum of tijd is ongeldig')
+            else:
+                form.add_error(None, 'Datum en tijd zijn vereist.')
 
-            if datum_str and tijd_str:
-                datum_tijd_str = f"{datum_str} {tijd_str}"
-                event.date = datetime.strptime(datum_tijd_str, '%Y-%m-%d %H:%M')
+        else:
+            return render(request, 'pages/user_pages/edit_event.html', {
+                'form': form,
+                'films': films,
+                'locations': locations,
+                'rooms': rooms,
+                'event': event,
+            })
 
-            form.save()
-            return redirect('dashboard')
     else:
         form = EventForm(instance=event)
 
@@ -211,36 +179,48 @@ def edit_event(request, event_id):
         'event': event
     })
 
+from datetime import datetime
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import Event, Film, Location, Room
+from .forms import EventForm
+
 
 def update_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
     if request.method == 'POST':
-        film_id = request.POST.get('film')
-        location_id = request.POST.get('location')
-        room_id = request.POST.get('zaal')
-        datum = request.POST.get('datum')
+        form = EventForm(request.POST, instance=event)
+
+        datum = request.POST.get('date')
         tijd = request.POST.get('tijd')
-        totaal_aantal_plekken = request.POST.get('totaal_aantal_plekken')
 
-        film = Film.objects.get(id=film_id)
-        location = Location.objects.get(id=location_id)
-        room = Room.objects.get(id=room_id)
+        if datum and tijd:
+            datetime_str = f"{datum} {tijd}"
+            try:
+                event_datetime = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+                event.date = event_datetime  # Bewaar de gecombineerde datetime
+            except ValueError:
+                return render(request, 'account/edit_event.html', {
+                    'form': form,
+                    'error': 'Datum en tijd zijn niet geldig.'
+                })
 
-        event.film = film
-        event.location = location
-        event.room = room
-        event.date = datum
-        event.time = tijd
-        event.totaal_aantal_plekken = totaal_aantal_plekken
+        if form.is_valid():
+            form.save()
+            return redirect('/account/dashboard')
 
-        event.save()
+        else:
+            return render(request, 'account/edit_event.html', {
+                'form': form,
+                'error': 'Er is een fout opgetreden bij het bijwerken van het event.'
+            })
 
-        return redirect('/account/dashboard',
-                        event_id=event.id)
+    else:
+        form = EventForm(instance=event)
 
-    return render(request, '/account/dashboard', {
-        'event': event,
+    return render(request, 'account/edit_event.html', {
+        'form': form,
         'films': Film.objects.all(),
         'locations': Location.objects.all(),
+        'rooms': Room.objects.all(),
     })

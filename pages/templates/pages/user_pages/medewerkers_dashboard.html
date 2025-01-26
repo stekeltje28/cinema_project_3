@@ -187,16 +187,17 @@
                     <option value="{{ film.id }}">{{ film.title }}</option>
                 {% endfor %}
             </select>
-            <select id="location" name="location" required style="padding: 8px; margin-bottom: 10px; width: 80%; max-width: 300px;">
+            <select id="select_location" name="location" required style="padding: 8px; margin-bottom: 10px; width: 80%; max-width: 300px;">
                 <option value="" disabled selected>Kies Locatie</option>
                 {% for location in locations %}
                     <option value="{{ location.id }}">{{ location.name }}</option>
                 {% endfor %}
             </select>
-            <select id="room" name="room" required style="padding: 8px; margin-bottom: 10px; width: 80%; max-width: 300px;">
+
+            <select id="select_room" name="room" required style="padding: 8px; margin-bottom: 10px; width: 80%; max-width: 300px;">
                 <option value="" disabled selected>Selecteer een zaal</option>
                 {% for room in rooms %}
-                    <option value="{{ room.id }}" data-capacity="{{ room.capacity }}">{{ room.name }}</option>
+                    <option value="{{ room.id }}" data-location-id="{{ room.location.id }}" data-capacity="{{ room.capacity }}">{{ room.name }}</option>
                 {% endfor %}
             </select>
         <section>
@@ -215,78 +216,121 @@
             </section>
         </form>
     </section>
+    <section class="card" style="width: 100%; padding: 20px; background-color: #333; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+        <h3 style="color: #fff; font-size: 24px; margin-bottom: 10px;">Reserveringen Beheren</h3>
+        <p style="color: #bbb; font-size: 16px;">Hier kun je alle reserveringen van gebruikers bekijken en beheren:</p>
+        <table style="width: 100%; border-collapse: collapse; text-align: left; color: #fff;">
+            <thead>
+                <tr>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Reservering ID</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Film Titel</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Gebruiker</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Aantal Stoelen</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Datum</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Tijd</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">Acties</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ reservation.id }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ reservation.film.title }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ reservation.user.username }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ reservation.aantal_stoelen }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ reservation.date }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">{{ reservation.time }}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #aaa;">
+                        <a href="{% url 'edit_reservation' reservation.id %}" class="btn btn-warning" style="padding: 5px 10px; color: #fff; background-color: #f0ad4e; border-radius: 4px; text-decoration: none;">Bewerk</a>
+                        <form method="POST" action="{% url 'delete_reservation' reservation.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" onclick="return confirm('Weet je zeker dat je deze reservering wilt verwijderen?')" class="btn btn-danger" style="padding: 5px 10px; color: #fff; background-color: #d9534f; border-radius: 4px;">Verwijder</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 10px; border-bottom: 1px solid #aaa;">Geen reserveringen gevonden</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+
     <script defer src=""></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script defer>
-// Initialiseer de performance chart
-const ctx = document.getElementById('performanceChart').getContext('2d');
-const performanceChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Januari', 'Februari', 'Maart', 'April', 'Mei'],
-        datasets: [{
-            label: 'Prestaties per Maand',
-            data: [65, 59, 80, 81, 56],
-            backgroundColor: 'rgba(0, 121, 255, 0.8)',
-            borderColor: 'rgba(0, 121, 255, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
+document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    const performanceChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Januari', 'Februari', 'Maart', 'April', 'Mei'],
+            datasets: [{
+                label: 'Prestaties per Maand',
+                data: [65, 59, 80, 81, 56],
+                backgroundColor: 'rgba(0, 121, 255, 0.8)',
+                borderColor: 'rgba(0, 121, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
-    }
-});
+    });
 
-function updateZaal() {
-    const zaalDropdown = document.getElementById("zaal");
-    const capacityInput = document.getElementById("aantal_plaatsen");
-    const locationDropdown = document.getElementById("location");
-    const selectedLocationId = locationDropdown.value;
+    const locationSelect = document.getElementById('select_location');
+    const roomSelect = document.getElementById('select_room');
+    const rooms = roomSelect.querySelectorAll('option');
 
-    // Log de gekozen locatie ID
-    console.log("Geselecteerde locatie ID:", selectedLocationId);
+    locationSelect.addEventListener('change', function () {
+        const selectedLocationId = locationSelect.value;
 
-    // Leeg de zaal dropdown
-    zaalDropdown.innerHTML = '<option value="" disabled selected>Selecteer een zaal</option>';
-
-    // Controleer of er zalen zijn voor de geselecteerde locatie
-    if (zalenData[selectedLocationId]) {
-        zaalDropdown.disabled = false;
-
-        // Voeg de zalen van de geselecteerde locatie toe aan de dropdown
-        zalenData[selectedLocationId].forEach(zaal => {
-            const option = document.createElement("option");
-            option.value = zaal.id;
-            option.textContent = zaal.name;
-            option.setAttribute("data-capacity", zaal.capacity);
-            zaalDropdown.appendChild(option);
+        rooms.forEach(function (option) {
+            option.style.display = 'none';
         });
-    } else {
-        zaalDropdown.disabled = true; // Deactiveer de zaal dropdown als er geen zalen zijn
-    }
 
-    // Leeg het capaciteit invoerveld
-    capacityInput.value = "";
+        rooms.forEach(function (option) {
+            if (option.getAttribute('data-location-id') === selectedLocationId) {
+                option.style.display = 'block';
+            }
+        });
 
-    // Als er al een zaal is geselecteerd, vul dan de capaciteit in
-    zaalDropdown.addEventListener("change", () => {
+        roomSelect.selectedIndex = 0;
+    });
+
+    zaalDropdown = document.getElementById('select_room');
+    capaciteitInput = document.getElementById('beschikbare_plaatsen');
+
+    zaalDropdown.addEventListener("change", function () {
         const selectedOption = zaalDropdown.options[zaalDropdown.selectedIndex];
         const capacity = selectedOption.getAttribute("data-capacity");
-        capacityInput.value = capacity ? capacity : "";
+        capaciteitInput.value = capacity ? capacity : "";
+
+        if (capacity) {
+            const aantalPlaatsen = document.getElementById("aantal_reserveringen");
+
+            aantalPlaatsen.addEventListener("input", function () {
+                if (parseInt(aantalPlaatsen.value) > parseInt(capacity)) {
+                    alert("Het aantal reserveringen kan niet groter zijn dan de zaalcapaciteit.");
+                    aantalPlaatsen.value = capacity;
+                }
+            });
+        }
     });
-}
 
     function addDatum() {
         const container = document.getElementById('datums-container');
         const newDatumRow = document.createElement('div');
         newDatumRow.classList.add('datum-row');
-        newDatumRow.style.marginBottom = '10px'; // Styling voor afstand tussen rijen
+        newDatumRow.style.marginBottom = '10px';
         newDatumRow.innerHTML = `
             <input type="date" name="datum[]" required style="padding: 8px; width: 48%; margin-right: 4%; border-radius: 4px;">
             <input type="time" name="tijd[]" required style="padding: 8px; width: 48%; border-radius: 4px;">
@@ -294,23 +338,26 @@ function updateZaal() {
         container.appendChild(newDatumRow);
     }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const zaalDropdown = document.getElementById('room'); // Selecteer de zaal-dropdown
-    const capaciteitInput = document.getElementById('beschikbare_plaatsen'); // Selecteer het aantal plaatsen inputveld
-
-    // Luister naar wijzigingen in de zaal-dropdown
-    zaalDropdown.addEventListener('change', () => {
-        const selectedOption = zaalDropdown.options[zaalDropdown.selectedIndex]; // Haal de geselecteerde optie op
-        const capaciteit = selectedOption.getAttribute('data-capacity'); // Haal de capaciteit op uit het data-attribuut
-
-        // Vul het capaciteit inputveld in met de waarde of leeg het als het niet bestaat
-        capaciteitInput.value = capaciteit ? capaciteit : '';
-    });
+    document.getElementById('addDatumButton').addEventListener('click', addDatum);
 });
 
-
-
 </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const deleteButtons = document.querySelectorAll('button[type="submit"]');
+        deleteButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                const confirmDelete = confirm('Weet je zeker dat je deze reservering wilt verwijderen?');
+                if (!confirmDelete) {
+                    event.preventDefault();  // Voorkom dat de form wordt verzonden als de gebruiker niet bevestigt
+                }
+            });
+        });
+    });
+</script>
+
 </main>
 </body>
 </html>
