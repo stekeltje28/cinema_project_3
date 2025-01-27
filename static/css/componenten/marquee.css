@@ -13,7 +13,7 @@
 .marquee {
     width: var(--marquee-width);
     height: var(--marquee-height);
-    background-color: #111;
+    background-color: #111; /* Set your desired background color */
     color: #333; /* Set your desired text color */
     overflow: unset;
     position: relative;
@@ -66,6 +66,7 @@
     height: auto;
     font-size: calc(var(--marquee-height) / 4);
     flex-shrink: 0;
+    #111-space: nowrap;
     padding: 0 10px;
     flex-direction: column;
 }

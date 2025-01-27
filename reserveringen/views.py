@@ -51,27 +51,29 @@ def update_reservering(request, reservering_id):
 
     return render(request, '/accounts/dashboard/', {'error': 'Ongeldig aantal tickets'})
 
+def edit_reservation(request, reservation_id):
+    reservation = Reservering.objects.get(id=reservation_id)
+
+    if request.method == 'POST':
+        new_aantal_tickets = request.POST.get('aantal_tickets')
+        print(new_aantal_tickets)
 
 
-def delete_reservation(request, reservering_id):
-    reservering = get_object_or_404(Reservering, id=reservering_id)
+        if new_aantal_tickets:
+            reservation.aantal_tickets = new_aantal_tickets
+            reservation.save()
+            return redirect('dashboard')
 
-    if reservering.gebruiker == request.user:
+    return redirect('dashboard')
 
-        event = reservering.event
-        event.totaal_aantal_plekken += reservering.aantal_tickets
-        event.save()
 
-        reservering.delete()
+def delete_reservation(request, reservation_id):
+    reservering = get_object_or_404(Reservering, id=reservation_id)
 
-        messages.success(request, 'Reservering succesvol geannuleerd.')
-
-    else:
-
-        messages.error(request, 'Je kunt deze reservering niet annuleren.')
-
+    print(reservering.id)
+    reservering.delete()
+    messages.success(request, 'Reservering succesvol verwijderd.')
     return redirect('/accounts/dashboard/')
-
 
 def assign_film_date_location(request):
     if request.method == "POST":

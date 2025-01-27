@@ -1,5 +1,8 @@
 from django.contrib.auth import authenticate, logout
 import json
+
+from django.core.checks import messages
+
 from films.models import Film, Location, Room
 from reserveringen.models import Event
 from django.contrib.auth.decorators import login_required
@@ -73,7 +76,7 @@ def user_logout(request):
 def check_logged_in(request):
     return JsonResponse({'is_logged_in': request.user.is_authenticated})
 
-
+from reserveringen.models import Reservering
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('/?openLoginModal=1')
@@ -85,6 +88,7 @@ def dashboard(request):
         rooms = Room.objects.all()
         films = Film.objects.all()
         events = Event.objects.all()
+        reservations = Reservering.objects.all()
 
         return render(request, 'pages/user_pages/medewerkers_dashboard.html', {
             'locations': locations,
@@ -92,6 +96,7 @@ def dashboard(request):
             'films': films,
             'events': events,
             'user_data': user_data,
+            'reservations': reservations
         })
     else:
 
@@ -157,13 +162,8 @@ def toggle_film_save(request, film_id):
 
 from django.shortcuts import render, get_object_or_404, redirect
 from reserveringen.models import Reservering
-
-def edit_reservation(request, reservation_id):
-    reservation = get_object_or_404(Reservering, id=reservation_id)
-    return render(request, 'pages/user_pages/edit_reservation.html', {'reservation': reservation})
-
-def delete_reservation(request, reservation_id):
-    reservation = get_object_or_404(Reservering, id=reservation_id)
-    reservation.delete()
-    return redirect('dashboard')
+from django.utils import timezone
+from django.shortcuts import render
+from .models import CustomUser
+from reserveringen.models import Reservering
 

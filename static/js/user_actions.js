@@ -117,7 +117,7 @@ function create_user(event) {
     });
 }
 
-function checkUserLoggedIn() {
+function checkUserLoggedIn(url = null) {
     fetch('/accounts/check-logged-in/', {
         method: 'GET',
         headers: {
@@ -127,9 +127,14 @@ function checkUserLoggedIn() {
     .then(response => response.json())
     .then(data => {
         if (data.is_logged_in) {
-            console.log('de user is al ingelogd')
-            closeModal()
-            openModal('loggedInModal');
+            if(url != null) {
+                window.location.href = url;
+                console.log('naar de url')
+            } else {
+                console.log('de user is al ingelogd')
+                closeModal()
+                openModal('loggedInModal');
+            }
         } else {
             closeModal()
             console.log('user is gechecked en niet ingelogd, de modal login word geopend')

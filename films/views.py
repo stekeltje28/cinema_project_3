@@ -8,7 +8,8 @@ from django.http import HttpResponse
 from films.forms import FilmForm
 from .forms import FilmForm, LocationForm
 from films.models import Location, Room
-from reserveringen.models import Event
+from reserveringen.models import Event, Reservering
+
 
 def location_list(request):
     locations = Location.objects.all()  

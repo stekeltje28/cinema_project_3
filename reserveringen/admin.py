@@ -9,8 +9,8 @@ class ReserveringAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('film', 'location', 'room', 'date', 'totaal_aantal_plekken')  
-    list_filter = ('film', 'location', 'room')  
-    search_fields = ('film__title', 'location__name', 'room__name')  
+    list_display = ('film', 'location', 'room', 'date', 'totaal_aantal_plekken', 'id')
+    list_filter = ('film', 'location', 'room', 'id')
+    search_fields = ('film__title', 'location__name', 'room__name', 'id')
     date_hierarchy = 'date'  
 

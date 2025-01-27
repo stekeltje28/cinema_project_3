@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from reserveringen.views import reservering
+from reserveringen import views as reservation_views
 
 urlpatterns = [
     path('locations/', views.location_list, name='location_list'),
@@ -13,6 +13,7 @@ urlpatterns = [
     path('films/add/', views.add_film, name='add_film'),
     path('films/<int:film_id>/', views.film_detail, name='film_detail'),
     path('films/list/', views.film_list, name='film_list'),
-    path('films/reservering/<int:film_id>/', reservering, name='reservering'),
+    path('films/reservering/<int:film_id>/', reservation_views.reservering, name='reservering'),
+    path('films/delete_reservation/<int:film_id>/', reservation_views.delete_reservation, name='delete_reservation')
 
 ]

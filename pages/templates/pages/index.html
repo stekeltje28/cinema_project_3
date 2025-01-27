@@ -36,7 +36,7 @@
 <main style="margin-top: 50px">
     {% if film_groups %}
         {% for group in film_groups %}
-        <div class="marquee">
+        <section class="marquee">
             <ul class="marquee-content">
                 {% for film in group %}
                 <li>
@@ -46,7 +46,7 @@
                 </li>
                 {% endfor %}
             </ul>
-        </div>
+        </section>
         {% endfor %}
     {% else %}
         <p>Geen films beschikbaar.</p>

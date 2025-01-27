@@ -34,6 +34,7 @@ class Reservering(models.Model):
         return f"Reservering door {self.gebruiker.email} voor {self.event.film.title} ({self.aantal_tickets} tickets)"
 
 class Event(models.Model):
+    id = models.AutoField(primary_key=True)
     film = models.ForeignKey(Film, on_delete=models.CASCADE, related_name="events")
     location = models.ForeignKey(Location, on_delete=models.CASCADE)  
     room = models.ForeignKey(Room, on_delete=models.CASCADE)  

@@ -12,8 +12,8 @@ urlpatterns = [
     path('check-logged-in/', views.check_logged_in, name='check_logged_in'),
     path('dashboard/', views.dashboard, name='dashboard'),
 
-    path('edit_reservation/<int:reservation_id>/', views.edit_reservation, name='edit_reservation'),
-    path('delete_reservation/<int:reservation_id>/', views.delete_reservation, name='delete_reservation'),
+    path('edit_reservation/<int:reservation_id>/', reservering_views.edit_reservation, name='edit_reservation'),
+    path('delete_reservation/<int:reservation_id>/', reservering_views.delete_reservation, name='delete_reservation'),
 
     path('remove_film/<int:film_id>/', accounts_views.remove_film_from_smaakprofiel,name='remove_film_from_smaakprofiel'),
 
@@ -21,7 +21,6 @@ urlpatterns = [
     path('edit_event/<int:event_id>/', reservering_views.edit_event, name='edit_event'),
     path('update_event/<int:event_id>', reservering_views.update_event, name='update_event'),
     path('update-reservering/<int:reservering_id>/',reservering_views.update_reservering, name='update_reservering'),
-    path('reservering/delete/<int:reservering_id>/', reservering_views.delete_reservation, name='delete_reservation'),
     path('toggle_film_save/<int:film_id>/', views.toggle_film_save, name='toggle_film_save'),
 
 ]
