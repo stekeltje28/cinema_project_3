@@ -119,7 +119,7 @@ Volg deze stappen om het project lokaal te draaien:
 
 ---
 
-## 🚀 Gebruik
+## Gebruik
 1. Open een browser en ga naar `http://127.0.0.1:8000/`
 2. Registreer of log in om reserveringen te maken
 3. Bekijk en filter beschikbare films
