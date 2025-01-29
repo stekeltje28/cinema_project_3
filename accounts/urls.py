@@ -6,17 +6,17 @@ from accounts import views as accounts_views
 
 
 urlpatterns = [
+    #account
     path('login/', views.user_login, name='login'),
     path('register/', views.register, name='register'),
     path('logout/', views.user_logout, name='logout'),
     path('check-logged-in/', views.check_logged_in, name='check_logged_in'),
     path('dashboard/', views.dashboard, name='dashboard'),
-
+    #reserveringen
     path('edit_reservation/<int:reservation_id>/', reservering_views.edit_reservation, name='edit_reservation'),
     path('delete_reservation/<int:reservation_id>/', reservering_views.delete_reservation, name='delete_reservation'),
-
+    #films en evenementen
     path('remove_film/<int:film_id>/', accounts_views.remove_film_from_smaakprofiel,name='remove_film_from_smaakprofiel'),
-
     path('assign/', reservering_views.assign_film_date_location, name='assign_film_date_location'),
     path('edit_event/<int:event_id>/', reservering_views.edit_event, name='edit_event'),
     path('update_event/<int:event_id>', reservering_views.update_event, name='update_event'),

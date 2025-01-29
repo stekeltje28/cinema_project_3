@@ -33,7 +33,6 @@ class UserDataAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('user', 'naam', 'leeftijd', 'profiel_foto')}),
         ('Reserveringen', {'fields': ('reserveringen', 'aantal_recente_reserveringen')}),
-        ('Voorkeuren', {'fields': ('opgeslagen', 'favoriete_genres')}),
     )
 
 admin.site.register(UserData, UserDataAdmin)

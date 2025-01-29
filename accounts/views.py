@@ -1,14 +1,14 @@
 from django.contrib.auth import authenticate, logout
 import json
-
-from django.core.checks import messages
-
+from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render
+from reserveringen.models import Reservering
 from films.models import Film, Location, Room
 from reserveringen.models import Event
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth import login
 from .models import CustomUser, UserData
+
 
 def register(request):
     if request.method == "POST":
@@ -76,11 +76,10 @@ def user_logout(request):
 def check_logged_in(request):
     return JsonResponse({'is_logged_in': request.user.is_authenticated})
 
-from reserveringen.models import Reservering
+
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('/?openLoginModal=1')
-
     user_data, created = UserData.objects.get_or_create(user=request.user)
 
     if request.user.is_superuser:
@@ -101,7 +100,7 @@ def dashboard(request):
     else:
 
         reserveringen = Reservering.objects.filter(gebruiker=request.user).select_related('event__film')
-        opgeslagen_films = user_data.opgeslagen.all()  
+        opgeslagen_films = user_data.opgeslagen.all()
 
         aantal_recente_reserveringen = reserveringen.count()
 
@@ -112,8 +111,11 @@ def dashboard(request):
             'opgeslagen_films': opgeslagen_films,
         })
 
-@login_required
+
 def remove_film_from_smaakprofiel(request, film_id):
+    if not request.user.is_authenticated:
+        return redirect('/?openLoginModal=1')
+
     user_data = UserData.objects.get(user=request.user)
     film = Film.objects.get(id=film_id)
 
@@ -124,8 +126,10 @@ def remove_film_from_smaakprofiel(request, film_id):
         return render('/accounts/dashboard')
 
 
-@login_required
 def save_film(request, film_id):
+    if not request.user.is_authenticated:
+        return redirect('/?openLoginModal=1')
+
     try:
 
         film = get_object_or_404(Film, id=film_id)
@@ -139,6 +143,7 @@ def save_film(request, film_id):
     except Exception as e:
 
         return JsonResponse({'error': str(e)}, status=400)
+
 
 def toggle_film_save(request, film_id):
     if request.user.is_authenticated != True:
@@ -158,12 +163,3 @@ def toggle_film_save(request, film_id):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from reserveringen.models import Reservering
-from django.utils import timezone
-from django.shortcuts import render
-from .models import CustomUser
-from reserveringen.models import Reservering
-

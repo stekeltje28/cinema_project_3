@@ -1,13 +1,16 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Sum
+from django.http import JsonResponse
 from django.utils.timezone import make_aware
-
 from .models import Reservering
-
+from datetime import datetime
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import Event, Film, Location, Room
+from .forms import EventForm
 
 
 def reservering(request, film_id):
-    if request.user.is_authenticated != True:
+    if not request.user.is_authenticated:
         return redirect(f'/films/{film_id}/?openLoginModal=1')
 
     elif request.method == 'POST':
@@ -38,26 +41,29 @@ def reservering(request, film_id):
         return redirect('film_detail', film_id=film_id)
 
 
-
 def update_reservering(request, reservering_id):
-    reservering = Reservering.objects.get(id=reservering_id)
+    if not request.user.is_authenticated:
+        return redirect('/?openLoginModal=1')
+    reservering_opject = Reservering.objects.get(id=reservering_id)
 
     if request.method == "POST":
         aantal_tickets = request.POST.get("aantal_tickets")
         if aantal_tickets.isdigit() and int(aantal_tickets) > 0:
-            reservering.aantal_tickets = int(aantal_tickets)
-            reservering.save()
+            reservering_opject.aantal_tickets = int(aantal_tickets)
+            reservering_opject.save()
             return redirect('/accounts/dashboard')
 
-    return render(request, '/accounts/dashboard/', {'error': 'Ongeldig aantal tickets'})
+    return redirect('/accounts/dashboard/', {'error': 'Ongeldig aantal tickets'})
+
 
 def edit_reservation(request, reservation_id):
+    if not request.user.is_authenticated:
+        return redirect('/?openLoginModal=1')
     reservation = Reservering.objects.get(id=reservation_id)
 
     if request.method == 'POST':
         new_aantal_tickets = request.POST.get('aantal_tickets')
         print(new_aantal_tickets)
-
 
         if new_aantal_tickets:
             reservation.aantal_tickets = new_aantal_tickets
@@ -68,6 +74,8 @@ def edit_reservation(request, reservation_id):
 
 
 def delete_reservation(request, reservation_id):
+    if not request.user.is_authenticated:
+        return redirect('/?openLoginModal=1')
     reservering = get_object_or_404(Reservering, id=reservation_id)
 
     print(reservering.id)
@@ -75,11 +83,14 @@ def delete_reservation(request, reservation_id):
     messages.success(request, 'Reservering succesvol verwijderd.')
     return redirect('/accounts/dashboard/')
 
+
 def assign_film_date_location(request):
+    if not request.user.is_authenticated:
+        return redirect('/?openLoginModal=1')
     if request.method == "POST":
         film_id = request.POST.get('film')
         location_id = request.POST.get('location')
-        room_id = request.POST.get('room')  # Correcte naam  # Correct gebruik: room in je formulier!
+        room_id = request.POST.get('room')
         datum_list = request.POST.getlist('datum[]')
         tijd_list = request.POST.getlist('tijd[]')
         beschikbare_plaatsen_id = request.POST.get('beschikbare_plaatsen')
@@ -132,13 +143,12 @@ def assign_film_date_location(request):
     films = Film.objects.all()
     locations = Location.objects.all()
     rooms = Room.objects.all()
-    return render(request, 'accounts/dashboard.html', {
-        'films': films,
-        'locations': locations,
-        'rooms': rooms
-    })
+    return redirect('dashboard')
+
 
 def edit_event(request, event_id):
+    if not request.user.is_authenticated:
+        return redirect('/?openLoginModal=1')
     event = get_object_or_404(Event, id=event_id)
     films = Film.objects.all()
     locations = Location.objects.all()
@@ -146,6 +156,8 @@ def edit_event(request, event_id):
 
     if request.method == 'POST':
         form = EventForm(request.POST, instance=event)
+    else:
+        form = EventForm(instance=event)
 
         if form.is_valid():
             date_str = request.POST.get('date')
@@ -173,59 +185,50 @@ def edit_event(request, event_id):
                 'event': event,
             })
 
-    else:
-        form = EventForm(instance=event)
-
-    return render(request, 'pages/user_pages/edit_event.html', {
-        'form': form,
-        'films': films,
-        'locations': locations,
-        'rooms': rooms,
-        'event': event
-    })
-
-from datetime import datetime
-from django.shortcuts import get_object_or_404, redirect, render
-from .models import Event, Film, Location, Room
-from .forms import EventForm
-
 
 def update_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
     if request.method == 'POST':
         form = EventForm(request.POST, instance=event)
+    else:
+        form = EventForm(instance=event)
 
-        datum = request.POST.get('date')
-        tijd = request.POST.get('tijd')
+    datum = request.POST.get('date')
+    tijd = request.POST.get('tijd')
 
-        if datum and tijd:
-            datetime_str = f"{datum} {tijd}"
-            try:
-                event_datetime = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
-                event.date = event_datetime  # Bewaar de gecombineerde datetime
-            except ValueError:
-                return render(request, 'account/edit_event.html', {
-                    'form': form,
-                    'error': 'Datum en tijd zijn niet geldig.'
-                })
+    if datum and tijd:
+        datetime_str = f"{datum} {tijd}"
+        try:
+            event_datetime = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+            event.date = event_datetime  # Bewaar de gecombineerde datetime
+        except ValueError:
+            return render(request, 'pages/user_pages/edit_event.html', {
+                'form': form,
+                'error': 'Datum en tijd zijn niet geldig.'
+            })
 
         if form.is_valid():
             form.save()
             return redirect('/account/dashboard')
 
         else:
-            return render(request, 'account/edit_event.html', {
+            return render(request, 'pages/user_pages/edit_event.html', {
                 'form': form,
                 'error': 'Er is een fout opgetreden bij het bijwerken van het event.'
             })
 
-    else:
-        form = EventForm(instance=event)
 
-    return render(request, 'account/edit_event.html', {
-        'form': form,
-        'films': Film.objects.all(),
-        'locations': Location.objects.all(),
-        'rooms': Room.objects.all(),
-    })
+from django.db.models import Count, F
+
+def reservering_data(request):
+    data = (
+        Reservering.objects
+        .values('event__film__title')
+        .annotate(
+            total_reserveringen=Count('id'),  # Dit is optioneel als je ook het aantal reserveringen per film wilt tonen
+            total_tickets=Sum('aantal_tickets')  # Dit telt het aantal gereserveerde tickets
+        )
+        .order_by('event__film__title')
+    )
+    return JsonResponse(list(data), safe=False)

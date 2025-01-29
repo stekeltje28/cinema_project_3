@@ -39,8 +39,8 @@ form label {
 form input {
     padding: 12px 20px;
     font-size: 1rem;
-    width: 80%;
-    max-width: 350px;
+    width: 90%;
+    max-width: 450px;
     border-radius: 10px;
     border: 1px solid #ccc;
     background-color: white;

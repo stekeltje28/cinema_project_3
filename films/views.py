@@ -1,34 +1,25 @@
-
-from django.shortcuts import render, get_object_or_404
-from .models import Location, Room, Film
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.contrib.auth import authenticate
+from django.shortcuts import get_object_or_404
+from .models import Film
 from django.contrib import messages
-from django.http import HttpResponse
-from films.forms import FilmForm
 from .forms import FilmForm, LocationForm
 from films.models import Location, Room
-from reserveringen.models import Event, Reservering
+from reserveringen.models import Event
+from django.shortcuts import render, redirect
+from .forms import RoomForm
 
 
-def location_list(request):
-    locations = Location.objects.all()  
-    messages.success(request, 'Het is gelukt!')
-    return redirect('/accounts/dashboard')
-
+# locaties en films zien verwijderen aanpassen en toevoegen
 
 def add_location(request):
     if request.method == 'POST':
-        form = LocationForm(request.POST)  
+        form = LocationForm(request.POST)
         if form.is_valid():
-            form.save()  
+            form.save()
             return redirect('/accounts/dashboard')
     else:
-        form = LocationForm()  
+        form = LocationForm()
     return redirect('/accounts/dashboard')
-
-
-from .forms import RoomForm
 
 
 def add_room(request):
@@ -43,7 +34,9 @@ def add_room(request):
 
     locations = Location.objects.all()
 
-    return redirect('dashboard', {'locations': locations, 'form':form})
+    return redirect('dashboard', {'locations': locations, 'form': form})
+
+
 def delete_room(request, room_id):
     room = get_object_or_404(Room, id=room_id)
 
@@ -54,36 +47,43 @@ def delete_room(request, room_id):
     return redirect('/accounts/dashboard')
 
 
-from django.shortcuts import get_object_or_404, redirect
-from .models import Location
-
-
 def delete_location(request, location_id):
-
     location = get_object_or_404(Location, id=location_id)
 
     location.delete()
 
     messages.success(request, 'het is gelukt!')
 
-
     return redirect('/accounts/dashboard')
 
-from django.shortcuts import render, redirect
 
 def add_film(request):
+    if not request.user.is_authenticated:
+        return redirect('/?openLoginModal=1')
     if request.method == 'POST':
-        form = FilmForm(request.POST, request.FILES)  
+        form = FilmForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()  
+            form.save()
             messages.success(request, 'Film succesvol toegevoegd!')
-            return redirect('/accounts/dashboard')  
+            return redirect('/accounts/dashboard')
         else:
             messages.error(request, 'Er is iets mis gegaan bij het toevoegen van de film!')
-            return redirect('/accounts/films/add/')  
+            return redirect('/accounts/films/add/')
     else:
 
-        return redirect('/accounts/dashboard')  
+        return redirect('/accounts/dashboard')
+
+
+def remove_film(request):
+    if not request.user.is_authenticated:
+        return redirect('/?openLoginModal=1')
+    if request.method == 'POST':
+        film_id = request.POST.get('selected_film')
+        film = Film.objects.get(id=film_id)
+        film.delete()
+        messages.success(request, 'het is gelukt!')
+        return redirect('dashboard')
+
 
 def film_detail(request, film_id):
     film = get_object_or_404(Film, id=film_id)
@@ -95,6 +95,8 @@ def film_detail(request, film_id):
     }
     return render(request, 'pages/film_detail.html', context)
 
+
+# voor het filteren van de films
 def film_list(request):
     films = Film.objects.all()
 
@@ -118,9 +120,8 @@ def film_list(request):
     context = {
         'films': films,
         'locations': Location.objects.all(),
-        'locatie_filter': locatie_filter,  
+        'locatie_filter': locatie_filter,
         'genre_filter': genre_filter,
         'film_naam_filter': film_naam_filter,
     }
     return render(request, 'pages/film_list.html', context)
-

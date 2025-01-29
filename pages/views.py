@@ -6,7 +6,6 @@ from django.shortcuts import render
 from films.models import Film
 
 
-
 def index(request):
     films = list(Film.objects.all())
 

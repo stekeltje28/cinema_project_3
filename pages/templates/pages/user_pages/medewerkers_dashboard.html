@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="{% static 'css/componenten/buttons.css' %}">
     <link rel="stylesheet" href="{% static 'css/page_componenten/medewerkers_dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+
 </head>
 <body>
 {% include 'componenten/navbar.html' %}
@@ -24,7 +26,7 @@
 <main class="dashboard">
 
     <section class="card profiel">
-        <h3>Profiel</h3>
+        <h3>Medewerker</h3>
         <article class="profile-image">
             <img src="{% static 'img/' %}{{ user_data.profiel_foto }}" alt="Profiel Foto">
                 <span class="material-icons">edit</span>
@@ -35,19 +37,19 @@
         <button onclick="document.getElementById('logout-form').submit();">log uit</button>
     </section>
 
-    <section class="card charts">
-        <h3>Charts en Statistieken</h3>
+    <section class="card charts" style="grid-column: span 2;">
+        <h3>Statistieken</h3>
         <p>aantal reserveringen per maand</p>
         <div class="chart-container">
             <canvas id="performanceChart"></canvas>
         </div>
         <div class="button_container">
-            <button><span class="material-icons">refresh</span> Vernieuwen</button>
-            <button><span class="material-icons">download</span> Downloaden</button>
+            <button style="width: auto"><span class="material-icons">refresh</span> Vernieuwen</button>
+            <button style="width: auto"><span class="material-icons">download</span> Downloaden</button>
         </div>
     </section>
 
-    <section class="card">
+    <section class="card" style="grid-column: span 2;">
         <h3>Film Toevoegen</h3>
         <form method="POST" action="{% url 'add_film' %}" enctype="multipart/form-data">
             {% csrf_token %}
@@ -57,8 +59,8 @@
             <label for="afbeelding">Afbeelding</label>
             <input type="file" name="afbeelding" id="afbeelding" accept="image/*" required>
             <br>
-            <label for="beschrijving">Beschrijving</label>
-            <textarea id="beschrijving" name="beschrijving" rows="4" placeholder="Geef een korte beschrijving van de film" required></textarea>
+            <label for="beschrijving" style="">Beschrijving</label>
+            <textarea id="beschrijving" name="beschrijving" rows="4" placeholder="Geef een beschrijving van de film"required style=" scroll-behavior: smooth; border: 1px solid #ccc; border-radius: 10px;font-size: 1rem; width: 90%; max-width: 450px;"></textarea>
             <br>
             <label for="min_leeftijd">Minimum Leeftijd</label>
             <input id="min_leeftijd" name="min_leeftijd" placeholder="Kijkwijzer leeftijd" required>
@@ -86,7 +88,32 @@
                 <option value="kortfilm">Kortfilm</option>
                 <option value="animatie">Animatie</option>
             </select>
-            <button type="submit">Film Toevoegen</button>
+            <button class="submit_button" type="submit">Film Toevoegen</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h3>Film verwijderen</h3>
+        <section class="card" style="margin: 20px">
+        <h3>Let op</h3>
+
+        <p>wanneer je de film verwijderd, is de data volledig verwijderd en is het niet meer mogelijk de data terug te halen!
+            <br><br>
+            alles gebeurt op eigen risico, mocht je toch vragen hebben? Neem contact op!
+            <br><br>
+            <p>telefoonnummer: <a href="#">0616565253</a></p>
+        </p>
+
+    </section>
+        <form method="POST" action="{% url 'remove_film'  %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <select name="selected_film" id="selected_film" class="selected_film" required>
+                <option value="">Kies een film</option>
+                {% for film in films %}
+                    <option value="{{ film.id }}">{{ film.title }}</option>
+                {% endfor %}
+            </select>
+            <button class="submit_button" type="submit">Film verwijderen</button>
         </form>
     </section>
 
@@ -118,7 +145,7 @@
     </section>
 
     <section class="card">
-        <h3>Voeg een zaal toe</h3>
+        <h3>Zaal toevoegen</h3>
         <p>Voeg een zaal toe aan een locatie</p>
         <form method="POST" action="{% url 'add_room' %}">
             {% csrf_token %}
@@ -132,8 +159,8 @@
             <label for="name">Naam van de zaal:</label>
             <input type="text" name="name" id="name" class="form-control" placeholder="Bijv. Zaal 1" required>
             <label for="capacity">Capaciteit:</label>
-            <input type="number" name="capacity" id="capacity" class="form-control" placeholder="Aantal reserveringen" required>
-            <button type="submit" class="btn btn-primary">Voeg zaal toe</button>
+            <input type="number" name="capacity" id="capacity" class="form-control" placeholder="Aantal plaatsen" required>
+            <button type="submit" class="btn btn-primary submit_button">Voeg zaal toe</button>
         </form>
     </section>
 
@@ -150,11 +177,15 @@
             <label for="city">Stad of regio</label>
             <br>
             <input type="text" name="city" id="city" class="form-control" placeholder="Bijv. Noord-Holland">
-            <button type="submit" class="btn btn-primary">Voeg locatie toe</button>
+            <button type="submit" class="btn btn-primary submit_button">Voeg locatie toe</button>
         </form>
     </section>
+</main>
 
-    <section class="card" style="width: 100%; padding: 20px; background-color: #333; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+<section class="cards-container" style="display: flex; flex-direction: column; gap: 20px; width: auto; margin: 15px">
+
+
+    <section class="card" style="width: 100%; padding: 20px; background-color: #333; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); display: flex;">
         <h3 style="color: #fff; font-size: 24px; margin-bottom: 10px;">Films Beheren</h3>
         <p style="color: #bbb; font-size: 16px;">Selecteer een film om een datum, locatie, zaal en reserveringen toe te voegen of aan te passen:</p>
         <table style="width: 100%; border-collapse: collapse; text-align: left; color: #fff;">
@@ -164,7 +195,7 @@
                     <th style="border-bottom: 2px solid #aaa; padding: 10px;">Locatie</th>
                     <th style="border-bottom: 2px solid #aaa; padding: 10px;">Zaal</th>
                     <th style="border-bottom: 2px solid #aaa; padding: 10px;">Datum - tijd</th>
-                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">totaal beschikbare plaatsen</th>
+                    <th style="border-bottom: 2px solid #aaa; padding: 10px;">(nog) beschikbare plaatsen</th>
                     <th style="border-bottom: 2px solid #aaa; padding: 10px;">Aantal Reserveringen</th>
                     <th style="border-bottom: 2px solid #aaa; padding: 10px;">Acties</th>
                 </tr>
@@ -190,7 +221,7 @@
             </tbody>
         </table>
         <p style="color: #bbb; font-size: 16px; margin-top: 20px;">Nieuw Event Toevoegen:</p>
-        <form method="POST" action="{% url 'assign_film_date_location' %}" style="display: inline; margin-top: 10px;">
+        <form method="POST" action="{% url 'assign_film_date_location' %}" style="display: inline; margin-top: 10px; justify-content: center">
             {% csrf_token %}
             <select id="film" name="film" required style="padding: 8px; margin-bottom: 10px; width: 80%; max-width: 300px;">
                 <option value="" disabled selected>Kies Film</option>
@@ -222,7 +253,7 @@
                 <input type="date" name="datum[]" required style="padding: 8px; width: 48%; margin-right: 4%; border-radius: 4px;">
                 <input type="time" name="tijd[]" required style="padding: 8px; width: 48%; border-radius: 4px;">
                 <div id="datums-container" style="margin-top: 20px;"></div>
-                <button type="button" onclick="addDatum()" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px;">Datum Toevoegen</button>
+                <button type="button" id="addDatumButton" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px;">Datum Toevoegen</button>
                 <button type="submit" class="btn btn-success" style="padding: 8px 15px; background-color: #5cb85c;">Nieuw Event Toevoegen</button>
             </section>
         </form>
@@ -241,6 +272,7 @@
                     <th style="border-bottom: 2px solid #aaa; padding: 10px;">Tijd</th>
                     <th style="border-bottom: 2px solid #aaa; padding: 10px;">Acties</th>
                 </tr>
+
 <tbody>
     {% if reservations %}
         {% for reservation in reservations %}
@@ -278,55 +310,12 @@
         </table>
     </section>
 
+</section>
 
     <script defer src="{% static 'js/medewerkers_actions.js' %}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script defer>
-document.addEventListener("DOMContentLoaded", function () {
-    const editButtons = document.querySelectorAll('.edit-btn');  // De bewerkknoppen
 
-    editButtons.forEach(button => {
-        button.addEventListener('click', function (event) {
-            event.preventDefault(); // Voorkom standaard formulierverzending
-            const form = this.closest('form'); // Haal het bijbehorende formulier op
-            const row = this.closest('tr'); // Vind de rij waar de knop op wordt geklikt
-            const inputContainer = row.querySelector('.stoelen-input-container');
-            const stoelenText = row.querySelector('.stoelen-tekst');
-            const inputField = row.querySelector('.stoelen-input');
-
-            // Toggle de zichtbaarheid van de tekst en het input veld
-            const isEditing = inputContainer.style.display === 'block';
-            stoelenText.style.display = isEditing ? 'block' : 'none';
-            inputContainer.style.display = isEditing ? 'none' : 'block';
-
-            if (!isEditing) {
-                inputField.value = stoelenText.textContent.trim();
-            } else {
-
-                const aantalTickets = inputField.value.trim();
-                if (aantalTickets) {
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'aantal_tickets';
-                    hiddenInput.value = aantalTickets;
-                    form.appendChild(hiddenInput);
-                    form.submit();
-                }
-            }
-        });
-    });
-});
-
-// Verwijderfunctie (voorbeeld)
-function confirmDelete(reservationId) {
-    if (confirm('Weet je zeker dat je deze reservering wilt verwijderen?')) {
-        window.location.href = `/accounts/delete_reservation/${reservationId}/`;
-    }
-}
-
-    </script>
-
-</main>
 </body>
+
 </html>
