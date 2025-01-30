@@ -6,12 +6,12 @@ Een gebruiksvriendelijke website waar gebruikers films kunnen bekijken en ticket
 2.📁 [Projectstructuur](#projectstructuur)  
 3.⚙️ [Installatie](#installatie)  
 4.🎟️ [Gebruik](#gebruik)  
-5.🤝 [Contributie](#contributie)  
-6.📜 [Licentie](#licentie)
+5.📜 [Licentie](#licentie)
 
 ---
 
 ## Over dit project
+
 Dit is een bioscoopwebsite gebouwd met Django. Gebruikers kunnen films bekijken, reserveringen maken en hun account beheren.
 
 ---
@@ -98,11 +98,11 @@ Volg deze stappen om het project lokaal te draaien:
 
 1. Clone de repository:
    ```sh
-   git clone https://github.com/jouw-gebruikersnaam/mbo-cinema.git
+   git clone https://github.com/jouw-gebruikersnaam/cinema_project_3.git
    ```
 2. Ga naar de projectmap:
    ```sh
-   cd mbo-cinema
+   cd cinema_project_3
    ```
 3. Installeer de vereiste pakketten:
    ```sh
@@ -126,14 +126,6 @@ Volg deze stappen om het project lokaal te draaien:
 
 ---
 
-## Contributie
-Wil je bijdragen? Volg deze richtlijnen:
-- Fork de repository
-- Maak een feature branch: `git checkout -b feature/nieuwe-feature`
-- Commit je wijzigingen: `git commit -m 'Voeg nieuwe feature toe'`
-- Push naar GitHub en maak een pull request
-
----
 
 ## Licentie
 Dit project valt onder de MIT-licentie.
