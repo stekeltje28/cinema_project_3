@@ -17,3 +17,5 @@ def index(request):
         return render(request, 'pages/index.html')
 
     return render(request, 'pages/index.html', {'film_groups': film_groups})
+
+

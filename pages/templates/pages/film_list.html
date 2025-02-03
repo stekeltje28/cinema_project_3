@@ -35,32 +35,30 @@
             </div>
 
             <label for="genre">Genre</label>
-            <select name="genre" id="genre">
-                <option value="">Kies een genre</option>
-                <option value="actie">Actie</option>
-                <option value="avontuur">Avontuur</option>
-                <option value="animatie">Animatie</option>
-                <option value="biografie">Biografie</option>
-                <option value="komedie">Komedie</option>
-                <option value="drama">Drama</option>
-                <option value="horror">Horror</option>
-                <option value="mysterie">Mysterie</option>
-                <option value="romantiek">Romantiek</option>
-                <option value="sciencefiction">Sciencefiction</option>
-                <option value="fantasie">Fantasie</option>
-                <option value="thriller">Thriller</option>
-                <option value="documentaire">Documentaire</option>
-                <option value="misdaad">Misdaad</option>
-                <option value="familie">Familie</option>
-                <option value="historisch">Historisch</option>
-                <option value="musical">Musical</option>
-                <option value="westerns">Western</option>
-                <option value="kortfilm">Kortfilm</option>
-                <option value="animatie">Animatie</option>
+           <select name="genre" id="genre">
+                <option value="">-- Selecteer een genre --</option>
+                <option value="avontuur" {% if request.GET.genre == "avontuur" %}selected{% endif %}>Avontuur</option>
+                <option value="animatie" {% if request.GET.genre == "animatie" %}selected{% endif %}>Animatie</option>
+                <option value="biografie" {% if request.GET.genre == "biografie" %}selected{% endif %}>Biografie</option>
+                <option value="komedie" {% if request.GET.genre == "komedie" %}selected{% endif %}>Komedie</option>
+                <option value="drama" {% if request.GET.genre == "drama" %}selected{% endif %}>Drama</option>
+                <option value="horror" {% if request.GET.genre == "horror" %}selected{% endif %}>Horror</option>
+                <option value="mysterie" {% if request.GET.genre == "mysterie" %}selected{% endif %}>Mysterie</option>
+                <option value="romantiek" {% if request.GET.genre == "romantiek" %}selected{% endif %}>Romantiek</option>
+                <option value="sciencefiction" {% if request.GET.genre == "sciencefiction" %}selected{% endif %}>Sciencefiction</option>
+                <option value="fantasie" {% if request.GET.genre == "fantasie" %}selected{% endif %}>Fantasie</option>
+                <option value="thriller" {% if request.GET.genre == "thriller" %}selected{% endif %}>Thriller</option>
+                <option value="documentaire" {% if request.GET.genre == "documentaire" %}selected{% endif %}>Documentaire</option>
+                <option value="misdaad" {% if request.GET.genre == "misdaad" %}selected{% endif %}>Misdaad</option>
+                <option value="familie" {% if request.GET.genre == "familie" %}selected{% endif %}>Familie</option>
+                <option value="historisch" {% if request.GET.genre == "historisch" %}selected{% endif %}>Historisch</option>
+                <option value="musical" {% if request.GET.genre == "musical" %}selected{% endif %}>Musical</option>
+                <option value="westerns" {% if request.GET.genre == "westerns" %}selected{% endif %}>Western</option>
+                <option value="kortfilm" {% if request.GET.genre == "kortfilm" %}selected{% endif %}>Kortfilm</option>
             </select>
 
             <label for="min_leeftijd">Minimale Leeftijd</label>
-            <input type="number" name="min_leeftijd" id="min_leeftijd" placeholder="leeftijd...">
+            <input type="number" name="min_leeftijd" id="min_leeftijd" placeholder="leeftijd..." value="{{ request.GET.min_leeftijd }}">
 
             <label for="film_naam">Zoek op Film Naam</label>
             <input type="text" name="film_naam" id="film_naam" value="{{ request.GET.film_naam }}" placeholder="Film naam...">
